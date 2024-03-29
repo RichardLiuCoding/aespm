@@ -71,7 +71,11 @@ def read_igor(key, commands=None, remote=False, connection=None):
             start = 'Make/N = ({})/O ReadOut // change N to number of parameters to read out\n'.format(N)
             command = ''
             for i in range(N):
-                command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
+                if key[i] == 'PIDSLoop.0.Setpoint' or key[i] == 'PIDSLoop.1.Setpoint':
+                    command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
+                else:
+                    command += 'ReadOut[{}] = GV("{}")\n'.format(i, key[i])
+                # command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
             end = r'Save/O/G/J ReadOut as "C:\\Users\\Asylum User\\Documents\\AEtesting\\readout.txt"'
             file = open("C:\\Users\\Asylum User\\Documents\\AEtesting\\ToIgor.arcmd","w",encoding = 'utf-8')
             file.writelines(start+command+end)
@@ -178,14 +182,16 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ['DARTPhase2', 'DART Phase2'],
         ['DARTWidth', 'DART Width', 'FreqWidth'],
         ['CenterPhase', 'Center Phase', 'PhaseCenter'],
-        ['Cycles', 'Cycle', 'NumCycles'],
+        ['Cycles', 'Cycle', 'NumCycles'], # 39
         ['DualFreq', 'DARTMode', 'DARTDualFreq'],
         ['DARTSweepWidth', 'SweepWidth', ],
         ['Capture', 'TakePhoto'],
         ['ACTune','AC Tune', 'Tune'],
-        ['XOffset', 'X Offset', 'Offset_X'],
+        ['XOffset', 'X Offset', 'Offset_X'], # 44
         ['YOffset', 'Y Offset', 'Offset_Y'],
         ['ScanAngle', 'Scan Angle', 'Angle'],
+        ['SetpointAmp', 'AC Setpoint', 'SetpointAC'],
+        ['SetpointDefl', 'PFMSetpoint', 'SetpointPFM', 'SetpointContact']
         
     ]
 
@@ -229,14 +235,16 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ["PhaseOffset1SetVar_3","DART", 1],
         ["DFRTFrequencyWidthSetvar","DART", 1],
         ["DoTuneCent_3", "DART", 1], 
-        ["ARDoIVCyclesSetVar_1","DARTSpectroscopy", 1],
+        ["ARDoIVCyclesSetVar_1","DARTSpectroscopy", 1], # 39
         ["DualACModeBox_3", "DART", 1], 
         ["SweepWidthSetVar_3", "DART", 1], 
         ["ARVCaptureButton_0","ARVideoPanel", 0],
         ["DoTuneOnceButton","TuneGraph", 0],
-        ['XOffsetSetVar_0', 'MasterPanel', 1],
-        ['YOffsetSetVar_0', 'MasterPanel', 1],
-        ['ScanAngleSetVar_0', 'MasterPanel', 1],
+        ['PV("XOffset", {})'.format(value), 4], # 44
+        ['PV("YOffset", {})'.format(value), 4],
+        ['PV("ScanAngle", {})'.format(value), 4],
+        ['PV("AmplitudeSetpointVolts", {})'.format(value), 4],
+        ['PV("DeflectionSetpointVolts", {})'.format(value), 4],
         
     ]
     # Construct the action dict
@@ -288,11 +296,11 @@ def move_tip(r, v0=None, s=None, remote=False, connection=None):
     '''
     x_delta, y_delta = r
     if v0 is None:
-        v0x, v0y = read_igor(key=['PIDSLoop.0.Setpoint', 'PIDSLoop.1.Setpoint'])
+        v0x, v0y = read_igor(key=['PIDSLoop.0.Setpoint', 'PIDSLoop.1.Setpoint'], connection=connection)
     else:
         v0x, v0y = v0
     if s is None:
-        sx, sy = read_igor(key=['XLVDTSens', 'YLVDTSens'])
+        sx, sy = read_igor(key=['XLVDTSens', 'YLVDTSens'], connection=connection)
     else:
         sx, sy = s
     vx = x_delta / sx
@@ -321,34 +329,47 @@ def move_stage(distance, remote=False, connection=None):
     '''
     # Determine the moving direction of the stage
     x, y = distance
-    x_direction = 'MoveStageLeftButton_0' if x < 0 else 'MoveStageRightButton_0'
-    y_direction = 'MoveStageDownButton_0' if y < 0 else 'MoveStageUpButton_0'
+    x_direction = 'MoveStageLeftButton_0' if x > 0 else 'MoveStageRightButton_0'
+    y_direction = 'MoveStageDownButton_0' if y > 0 else 'MoveStageUpButton_0'
 
     # Change the motor step size for x direction moving
     if x != 0:
         write_igor(commands='PV("StageMoveStepSize", {})'.format(abs(x)), connection=connection)
-        write_igor(commands='ARExecuteControl("{}","MasterMotorPanel#StepAndVac#StepPanel",0,"")'.format(x_direction), connection=connection)
+        write_igor(commands='MoveStage("{}")'.format(x_direction), connection=connection)
+        # write_igor(commands='ARExecuteControl("{}","MasterMotorPanel#StepAndVac#StepPanel",0,"")'.format(x_direction), connection=connection)
     
     if y != 0:
         # Change the motor step size for y direction moving
         write_igor(commands='PV("StageMoveStepSize", {})'.format(abs(y)), connection=connection)
-        write_igor(commands='ARExecuteControl("{}","MasterMotorPanel#StepAndVac#StepPanel",0,"")'.format(y_direction), connection=connection)
+        write_igor(commands='MoveStage("{}")'.format(y_direction), connection=connection)
+        # write_igor(commands='ARExecuteControl("{}","MasterMotorPanel#StepAndVac#StepPanel",0,"")'.format(y_direction), connection=connection)
 
 
-def tune_probe(num=3, path=r"C:\Users\Asylum User\Documents\AEtesting\Tune.ibw", out=False):
+def tune_probe(num=3, path=r"C:\Users\Asylum User\Documents\AEtesting\Tune.ibw", center=None, width=50e3, out=False, connection=None):
     for i in range(num):
-        spm_control('OneTuneDART', wait=1)
-        spm_control('GetTune', wait=0.5)
-        w = ibw_read(path)
+        spm_control('OneTuneDART', wait=1, connection=connection)
+        spm_control('GetTune', wait=0.5, connection=connection)
+        if connection is not None:
+            download_file(connection=connection, file_path=path, local_file_name='tune.ibw')
+            w = ibw_read('tune.ibw')
+        else:
+            w = ibw_read(path)
         freq = w[0][w[1].argmax()]
-        spm_control('DARTFreq', value=freq)
-    spm_control('GetTune', wait=0.5)
-    w = ibw_read(path)
+        if center is not None:
+            if abs(freq-center) > width:
+                freq = center
+        spm_control('DARTFreq', value=freq, connection=connection)
+    spm_control('GetTune', wait=0.5, connection=connection)
+    if connection is not None:
+        download_file(connection=connection, file_path=path, local_file_name='tune.ibw')
+        w = ibw_read('tune.ibw')
+    else:
+        w = ibw_read(path)
     # Get the freq corresponds to the max intensity
     freq = w[0][w[1].argmax()]
     # Set this freq to be the driven freq
-    spm_control('DARTFreq', value=freq)
-    spm_control('CenterPhase')
+    spm_control('DARTFreq', value=freq, connection=connection)
+    spm_control('CenterPhase', connection=connection)
     if out == True:
         return w
 
