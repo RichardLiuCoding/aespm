@@ -67,7 +67,7 @@ spm_control('StartApproach', wait=45)
 ```
 
 ## Deek Kernel Learning on Jupiter
-[Link](https://drive.google.com/file/d/1fOdsmjxh1PEiKI6Drm49-SOtuo5KTxVx/view?usp=share_link) to the video of combinatorial exploration on a grid.
+[Link](https://drive.google.com/file/d/1fOdsmjxh1PEiKI6Drm49-SOtuo5KTxVx/view?usp=share_link) to the video of Deep Kernel active learning controlled from a supercomputer.
 
 # All implemented controls in ```spm_control()``` function
 
