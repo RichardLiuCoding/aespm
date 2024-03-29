@@ -5,7 +5,7 @@ import paramiko
 import Pyro5.api
 
 def execute_exe_on_server(exe_path, args):
-    uri = "PYRO:command.executor@10.128.163.6:9091" # Replace with your server's URI
+    uri =  # Replace with your server's URI
     #   print("Connecting to server at", uri)
     command_executor = Pyro5.api.Proxy(uri)
     response = command_executor.execute_exe_with_args(exe_path, args)
@@ -16,12 +16,9 @@ def main_exe_on_server():
     args = r"C:\Users\Asylum User\Documents\AEtesting\ToIgor.arcmd"
     execute_exe_on_server(exe_path, args)
 
-# host = '10.128.163.6'
-# username = 'Asylum User'
-# password = 'jupiter'
 # connection, client = return_connection(host, username, password)
 
-def return_connection(host: str='10.128.163.6', username: str='Asylum User', password: str='jupiter'):
+def return_connection(host: str, username: str, password: str):
     """
     Return a connection object to the remote server.
     Args:
