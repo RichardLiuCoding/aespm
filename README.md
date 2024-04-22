@@ -39,9 +39,9 @@ aespm.utils.connect(host=host)
 On the **remote** server, you only need the following information to build the connection:
 
 ```Python
-# host = 'IP_address_local_desktop'
-# username = 'your_login_name'
-# password = 'your_login_credential'
+host = 'IP_address_local_desktop'
+username = 'your_login_name'
+password = 'your_login_credential'
 
 exp = ae.Experiment(folder=folder, connection=[host, username, password])
 ```
