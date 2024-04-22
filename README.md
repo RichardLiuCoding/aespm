@@ -12,6 +12,8 @@ pip install aespm
 
 # Examples
 
+For more detailed tutorials and example workflows, please take a look at [**aespm/notebooks**](https://github.com/RichardLiuCoding/aespm/tree/main/aespm/notebooks) folder.
+
 ## Create an aespm.Experiment() object
 
 ```Python
@@ -82,8 +84,6 @@ for key in p:
 ```
 
 This is particularly useful when you need to track many different data formats (list, np.ndarray, tensors) when integrating with machine learning algorithms.
-
-For more detailed examples, please take a look at tutorials and example notebooks in **aespm/notebooks** folder.
 
 ## Combinatorial library exploration
 [Link](https://drive.google.com/file/d/1kcdGX46scTYePuiLnQiLbcp94MKt3_AG/view?usp=sharing) to the video of combinatorial exploration on a grid.
