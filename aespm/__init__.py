@@ -11,6 +11,7 @@ from aespm import utils
 
 # If there is no buffer files, create them in Documents/buffers
 import os 
+import shutil
 
 doc_path = os.path.expanduser('~')
 buffer_path = os.path.join(doc_path, 'buffer')
@@ -28,5 +29,9 @@ try:
 	if not os.path.exists(os.path.join(buffer_path, 'SendToIgor.bat')):
 		with open(os.path.join(buffer_path, 'SendToIgor.bat'), 'w') as fopen:
 			fopen.write('"C:\\AsylumResearch\\v19\\RealTime\\Igor Pro Folder\\Igor.exe" "{}"'.format(os.path.join(buffer_path, 'SendToIgor.bat')))
+
+	# Copy the user functions into the default include folder of AR
+	shutil.copy(os.path.join(aespm.__path__, 'user functions', 'UserFunctions.ipf'), os.path.join(doc_path, 'AsylumResearch', 'UserIncludes'))
+
 except PermissionError:
 	print('No writing permission to ~/Documents. Please create buffer folder and files manually.')
