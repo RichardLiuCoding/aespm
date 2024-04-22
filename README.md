@@ -133,6 +133,29 @@ This is the fundamental object for AE workflows.
 * **exp.param** is a dict to keep track of experimental parameters and ML intermediate data
 * It handles file I/O, SSH file transfer and connection automatically
 
+## Functional blocks and workflows
+
+Functional blocks are defined based on a list of sequential actions that achieve one major task:
+* Start an AC scan and load and plot the acquired image when it's done
+* Move the probe to the location (x, y) and take a force-distance curve and extract final force when it's done.
+
+These functional blocks can be created with **Experiment.execute_sequence()** and **Experiment.add_func()** methods. 
+Once a functional block is appened to Experiment object, it can be called the same way as default single actions. 
+Therefore, the full workflow can be built upon functional blocks, which makes it organized, concise, and easy to debug.
+
+An example of AC exploration on a grid workflow build on functional blocks:
+```Python
+for i in range(num_points):
+    print("Working on Location: {}/{}".format(i+1, num_points), end='\r')
+   
+    # Skip the first point
+    if i:
+        # Move the stage to the next grid point
+        exe.execute('stage', value=[displacement])
+
+    # AC scan
+    exe.execute('start_ac_scan', value=['BSFO_AC{:03}_'.format(i+1)])
+```
 
 # Default actions implemented in ```spm_control()``` function
 
