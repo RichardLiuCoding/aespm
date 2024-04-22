@@ -627,9 +627,9 @@ def tune_probe(num=1, path=os.path.join(buffer_path, 'Tune.ibw'), center=None, w
         spm_control('GetTune', wait=0.5, connection=connection)
         if connection is not None:
             aespm.utils.download_file(connection=connection, file_path=path, local_file_name='tune.ibw')
-            w = ibw_read('tune.ibw')
+            w = ibw_read('tune.ibw').data
         else:
-            w = ibw_read(path)
+            w = ibw_read(path).data
         freq = w[0][w[1].argmax()]
         if center is not None:
             if abs(freq-center) > width:
@@ -638,9 +638,9 @@ def tune_probe(num=1, path=os.path.join(buffer_path, 'Tune.ibw'), center=None, w
     spm_control('GetTune', wait=0.5, connection=connection)
     if connection is not None:
         aespm.utils.download_file(connection=connection, file_path=path, local_file_name='tune.ibw')
-        w = ibw_read('tune.ibw')
+        w = ibw_read('tune.ibw').data
     else:
-        w = ibw_read(path)
+        w = ibw_read(path).data
     # Get the freq corresponds to the max intensity
     freq = w[0][w[1].argmax()]
     # Set this freq to be the driven freq
