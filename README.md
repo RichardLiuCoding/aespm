@@ -4,6 +4,12 @@ Python interface that enables local and remote control of Scanning Probe Microsc
 
 It offers a modular way to write autonomous workflows ranging from simple routine operations, to advanced automatic scientific discovery based on machine learning.
 
+# Installation
+
+```Python
+pip install aespm
+```
+
 # Examples
 
 ## Create an aespm.Experiment() object
@@ -134,12 +140,14 @@ This is the fundamental object for AE workflows.
  ['UpScan', 'ScanUp'],         # Start an upward scan
  ['XOffset', 'X Offset', 'Offset_X'], # Move the scan center along the x-axis
  ['YOffset', 'Y Offset', 'Offset_Y'], # Move the scan center along the y-axis
+ ['ZeroPD', 'PDZero'], # Zero the deflection
 
  # Force curve related controls
  ['ClearForce', 'Clear', 'ClearMarker'], # Clear all existing force point
  ['GoThere', 'Gothere'], # Go to the current force point (if no existing force point, it will move the probe to the center of image)
  ['SingleF', 'SingleForce'], # Start a single force-distance curve
- ['ThatsIt', 'Thats'], # 
+ ['ThatsIt', 'Thats'], #
+ ['FDTrigger', 'FDTriggerPoint'], # Change the trigger point for the F-D
 
  # Nap panel related controls
  ['SurfaceVoltage', 'V_surface', 'v_surface', 'v_surf'], # Change the surface voltage
@@ -159,6 +167,8 @@ This is the fundamental object for AE workflows.
  ['DARTSweepWidth', 'SweepWidth'], # Change the DART sweep frequency range in tuning
  ['DARTWidth', 'DART Width', 'FreqWidth'], # Change the DART frequency separation 
  ['DualFreq', 'DARTMode', 'DARTDualFreq'], # Enable/Disable the dual frequency modes
+ ['DARTTrigger', 'SSTrigger'], # Change the trigger point for DART
+ ['DARTAmp', 'DART v_ac'], # Change the DART drive voltage 
 
  # I-V panel related controls
  ['IVAmpDART', 'IV_Amp_DART', 'iv_amp_DART'], # DART spec amplitude
