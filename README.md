@@ -12,6 +12,9 @@ pip install aespm
 
 For AR SPM users, download the "UserFunctions.ipf" from [**aespm/user functions**](https://github.com/RichardLiuCoding/aespm/blob/main/aespm/user%20functions/UserFunctions.ipf) folder and put it in "Documents/AsylumResearch/UserIncludes" folder so that it will automatically loaded at AR startup. You only need to do it one time after installing aespm.
 
+ps, if you software is already running, you need to click "Programming -> Rescan User Includes" to make this change effective.
+
+
 # Examples
 
 For more detailed tutorials and example workflows, please take a look at [**aespm/notebooks**](https://github.com/RichardLiuCoding/aespm/tree/main/aespm/notebooks) folder.
