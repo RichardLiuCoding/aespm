@@ -2,15 +2,16 @@ from setuptools import setup, find_packages
 
 setup(
   name = 'aespm',
-  version = '1.0.2',
+  version = '1.0.3',
   packages = find_packages(),
   license='MIT',
-  description = 'Asylum Research SPM data analysis packages',
+  description = 'SPM Automation with Python and Machine Learning.',
+  long_description = 'Python interface that enables local and remote control of Scanning Probe Microscope (SPM) with codes.\nIt offers a modular way to write autonomous workflows ranging from simple routine operations, to advanced automatic scientific discovery based on machine learning.',
   author = 'Richard (Yu) Liu',
   author_email = 'yliu206@utk.edu',
   url = 'https://github.com/RichardLiuCoding/aespm',
   download_url = 'https://github.com/RichardLiuCoding/aespm.git',
-  keywords = ['SPM', 'AR', 'Python', 'Instrument control', 'Autonomoous', 'Machine learning','Data Analysis'],
+  keywords = ['SPM', 'Python', 'Instrument control', 'Autonomoous', 'Machine learning','Data Analysis'],
   install_requires=[
           'numpy',
           'scipy',
@@ -22,7 +23,7 @@ setup(
   classifiers=[
     'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
-    'Topic :: Software Development :: Build Tools',
+    'Topic :: Software Development :: Workflow Implementation for SPM',
     'License :: OSI Approved :: MIT License',
     'Programming Language :: Python :: 3'
   ],
