@@ -9,7 +9,7 @@
 #include ":AsylumResearch:Code3D:PZTHyst"
 
 Function GetTune()
-    String FileName = "C:\\Users\\Asylum User\\Documents\\AEtesting\\Tune.ibw"
+    String FileName = "C:\\Users\\Asylum User\\Documents\\buffer\\Tune.ibw"
     String DataFolder = GetDF("Main")
     // Take out Z Sensor trace and retrace
     Wave Freq = root:packages:MFP3D:Tune:Frequency
@@ -23,7 +23,7 @@ Function GetTune()
 End //GetTune
 
 Function GetMeter()
-    String FileName = "C:\\Users\\Asylum User\\Documents\\AEtesting\\Meter.ibw"
+    String FileName = "C:\\Users\\Asylum User\\Documents\\buffer\\Meter.ibw"
     String DataFolder = GetDF("Main")
     // Take out Z Sensor trace and retrace
     Wave Meter = root:packages:MFP3D:Meter:ReadMeterRead

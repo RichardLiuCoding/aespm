@@ -2,6 +2,11 @@ import paramiko
 import Pyro5.api
 import subprocess
 
+buffer_path = os.path.join(os.path.expanduser('~'), 'buffer')
+command_buffer = os.path.join(buffer_path, 'ToIgor.arcmd')
+read_out_buffer = os.path.join(buffer_path, 'readout.txt')
+bash_buffer = os.path.join(buffer_path, 'SendToIgor.bat')
+
 @Pyro5.api.expose
 class CommandExecutor:
     def execute_exe_with_args(self, exe_path, arg):
@@ -27,7 +32,7 @@ def execute_exe_on_server(exe_path, uri, args):
 
 def main_exe_on_server():
     exe_path = r"C:\AsylumResearch\v19\RealTime\Igor Pro Folder\Igor.exe"
-    args = r"C:\Users\Asylum User\Documents\AEtesting\ToIgor.arcmd"
+    args = command_buffer
     execute_exe_on_server(exe_path, args)
 
 def return_connection(host: str, username: str, password: str):

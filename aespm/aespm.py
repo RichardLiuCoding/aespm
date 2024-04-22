@@ -11,14 +11,15 @@ from IPython.display import display, clear_output
 import shutil
 import subprocess
 
-import aespm
-
-# from aespm.tools import *
-# from aespm.utils import *
-
-# from types import MethodType
 import types
 import pickle
+
+import aespm
+
+buffer_path = os.path.join(os.path.expanduser('~'), 'buffer')
+command_buffer = os.path.join(buffer_path, 'ToIgor.arcmd')
+read_out_buffer = os.path.join(buffer_path, 'readout.txt')
+bash_buffer = os.path.join(buffer_path, 'SendToIgor.bat')
 
 class Experiment(object):
     '''
@@ -285,16 +286,16 @@ def write_spm(commands, connection=None, wait=0.35):
         write_spm('ARExecuteControl("StartPIDSLoop0","PIDSLoopPanel",0,"")', connection=connection)
     '''
     if connection==None:
-        file = open(r"C:\\Users\\Asylum User\\Documents\\AEtesting\\ToIgor.arcmd","w",encoding = 'utf-8')
+        file = open(command_buffer,"w",encoding = 'utf-8')
         file.writelines(commands)
         file.close()
 
-        p = Popen("C:\\Users\\Asylum User\\Documents\\AEtesting\\SendToIgor.bat")
+        p = Popen(bash_buffer)
         p.wait()
         time.sleep(wait)
     else:
         aespm.utils.write_to_remote_file(connection,
-                             file_path = "C:\\Users\\Asylum User\\Documents\\AEtesting\\ToIgor.arcmd", data = commands)
+                             file_path = command_buffer, data = commands)
         aespm.utils.main_exe_on_server()
         time.sleep(wait)
 
@@ -328,23 +329,22 @@ def read_spm(key, commands=None, connection=None):
                     command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
                 else:
                     command += 'ReadOut[{}] = GV("{}")\n'.format(i, key[i])
-                # command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
-            end = r'Save/O/G/J ReadOut as "C:\\Users\\Asylum User\\Documents\\AEtesting\\readout.txt"'
-            file = open("C:\\Users\\Asylum User\\Documents\\AEtesting\\ToIgor.arcmd","w",encoding = 'utf-8')
+            end = r'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer)
+            file = open(command_buffer,"w",encoding = 'utf-8')
             file.writelines(start+command+end)
             file.close()
-            p = Popen("C:\\Users\\Asylum User\\Documents\\AEtesting\\SendToIgor.bat")
+            p = Popen(bash_buffer)
             p.wait()
-            return np.loadtxt(r"C:\\Users\\Asylum User\\Documents\\AEtesting\\readout.txt")
+            return np.loadtxt(read_out_buffer)
 
         else:
-            file = open("C:\\Users\\Asylum User\\Documents\\AEtesting\\ToIgor.arcmd","w",encoding = 'utf-8')
+            file = open(command_buffer,"w",encoding = 'utf-8')
             file.writelines(commands)
             file.close()
 
-            p = Popen("C:\\Users\\Asylum User\\Documents\\AEtesting\\SendToIgor.bat")
+            p = Popen(bash_buffer)
             p.wait()
-            return np.loadtxt(r"C:\\Users\\Asylum User\\Documents\\AEtesting\\readout.txt")
+            return np.loadtxt(read_out_buffer)
 
     else:
         if commands == None:
@@ -356,22 +356,22 @@ def read_spm(key, commands=None, connection=None):
                     command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
                 else:
                     command += 'ReadOut[{}] = GV("{}")\n'.format(i, key[i])
-            end = r'Save/O/G/J ReadOut as "C:\\Users\\Asylum User\\Documents\\AEtesting\\readout.txt"'
+            end = r'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer)
             commands = start+command+end
             aespm.utils.write_to_remote_file(connection,
-                         file_path = "C:\\Users\\Asylum User\\Documents\\AEtesting\\ToIgor.arcmd", data = commands)# doubt as richard
+                         file_path = command_buffer, data = commands)# doubt as richard
             aespm.utils.main_exe_on_server()
 
-            s = aespm.utils.read_remote_file(connection, r"C:\\Users\\Asylum User\\Documents\\AEtesting\\readout.txt")
+            s = aespm.utils.read_remote_file(connection, read_out_buffer)
 
             return [float(k) for k in s.decode('utf-8').split('\r')[:-1]]
 
         else:
             aespm.utils.write_to_remote_file(connection,
-                             file_path = "C:\\Users\\Asylum User\\Documents\\AEtesting\\ToIgor.arcmd", data = commands)# doubt as richard
+                             file_path = command_buffer, data = commands)# doubt as richard
 
             aespm.utils.main_exe_on_server()
-            s = aespm.utils.read_remote_file(connection, r"C:\\Users\\Asylum User\\Documents\\AEtesting\\readout.txt")
+            s = aespm.utils.read_remote_file(connection, read_out_buffer)
 
             return [float(k) for k in s.decode('utf-8').split('\r')[:-1]]
         
@@ -607,7 +607,7 @@ def move_stage(distance, connection=None):
         write_spm(commands='MoveStage("{}")'.format(y_direction), connection=connection)
 
 
-def tune_probe(num=3, path=r"C:\Users\Asylum User\Documents\AEtesting\Tune.ibw", center=None, width=50e3, out=False, connection=None):
+def tune_probe(num=1, path=os.path.join(buffer_path, 'Tune.ibw'), center=None, width=50e3, out=False, connection=None):
     for i in range(num):
         spm_control('OneTuneDART', wait=1, connection=connection)
         spm_control('GetTune', wait=0.5, connection=connection)
@@ -698,8 +698,8 @@ def ibw_read(fname, retry=10, wait=0.1, lines=False, connection=None):
         if lines==True:
             while retries < retry:
                 try:
-                    shutil.copy(fname, "C:\\Users\\Asylum User\\Documents\\AEtesting\\copy.ibw")
-                    data = bw.load("C:\\Users\\Asylum User\\Documents\\AEtesting\\copy.ibw")
+                    shutil.copy(fname, os.path.join(buffer_path, 'copy.ibw'))
+                    data = bw.load(os.path.join(buffer_path, 'copy.ibw'))
                     wave = data['wave']['wData']
                     return wave.T
                     # return aespm.tools.load_ibw(fname)
