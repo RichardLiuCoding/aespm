@@ -11,8 +11,10 @@ from IPython.display import display, clear_output
 import shutil
 import subprocess
 
-from tools import *
-from utils import *
+import aespm
+
+# from aespm.tools import *
+# from aespm.utils import *
 
 # from types import MethodType
 import types
@@ -64,7 +66,7 @@ class Experiment(object):
         # Remote control
         if connection is not None:
             host, username, password = connection
-            self.connection, self.client = return_connection(host, username, password)
+            self.connection, self.client = aespm.utils.return_connection(host, username, password)
         else:
             self.connection, self.client = None, None
 
@@ -291,9 +293,9 @@ def write_spm(commands, connection=None, wait=0.35):
         p.wait()
         time.sleep(wait)
     else:
-        write_to_remote_file(connection,
+        aespm.utils.write_to_remote_file(connection,
                              file_path = "C:\\Users\\Asylum User\\Documents\\AEtesting\\ToIgor.arcmd", data = commands)
-        main_exe_on_server()
+        aespm.utils.main_exe_on_server()
         time.sleep(wait)
 
 
@@ -356,20 +358,20 @@ def read_spm(key, commands=None, connection=None):
                     command += 'ReadOut[{}] = GV("{}")\n'.format(i, key[i])
             end = r'Save/O/G/J ReadOut as "C:\\Users\\Asylum User\\Documents\\AEtesting\\readout.txt"'
             commands = start+command+end
-            write_to_remote_file(connection,
+            aespm.utils.write_to_remote_file(connection,
                          file_path = "C:\\Users\\Asylum User\\Documents\\AEtesting\\ToIgor.arcmd", data = commands)# doubt as richard
-            main_exe_on_server()
+            aespm.utils.main_exe_on_server()
 
-            s = read_remote_file(connection, r"C:\\Users\\Asylum User\\Documents\\AEtesting\\readout.txt")
+            s = aespm.utils.read_remote_file(connection, r"C:\\Users\\Asylum User\\Documents\\AEtesting\\readout.txt")
 
             return [float(k) for k in s.decode('utf-8').split('\r')[:-1]]
 
         else:
-            write_to_remote_file(connection,
+            aespm.utils.write_to_remote_file(connection,
                              file_path = "C:\\Users\\Asylum User\\Documents\\AEtesting\\ToIgor.arcmd", data = commands)# doubt as richard
 
-            main_exe_on_server()
-            s = read_remote_file(connection, r"C:\\Users\\Asylum User\\Documents\\AEtesting\\readout.txt")
+            aespm.utils.main_exe_on_server()
+            s = aespm.utils.read_remote_file(connection, r"C:\\Users\\Asylum User\\Documents\\AEtesting\\readout.txt")
 
             return [float(k) for k in s.decode('utf-8').split('\r')[:-1]]
         
@@ -610,7 +612,7 @@ def tune_probe(num=3, path=r"C:\Users\Asylum User\Documents\AEtesting\Tune.ibw",
         spm_control('OneTuneDART', wait=1, connection=connection)
         spm_control('GetTune', wait=0.5, connection=connection)
         if connection is not None:
-            download_file(connection=connection, file_path=path, local_file_name='tune.ibw')
+            aespm.utils.download_file(connection=connection, file_path=path, local_file_name='tune.ibw')
             w = ibw_read('tune.ibw')
         else:
             w = ibw_read(path)
@@ -621,7 +623,7 @@ def tune_probe(num=3, path=r"C:\Users\Asylum User\Documents\AEtesting\Tune.ibw",
         spm_control('DARTFreq', value=freq, connection=connection)
     spm_control('GetTune', wait=0.5, connection=connection)
     if connection is not None:
-        download_file(connection=connection, file_path=path, local_file_name='tune.ibw')
+        aespm.utils.download_file(connection=connection, file_path=path, local_file_name='tune.ibw')
         w = ibw_read('tune.ibw')
     else:
         w = ibw_read(path)
@@ -700,7 +702,7 @@ def ibw_read(fname, retry=10, wait=0.1, lines=False, connection=None):
                     data = bw.load("C:\\Users\\Asylum User\\Documents\\AEtesting\\copy.ibw")
                     wave = data['wave']['wData']
                     return wave.T
-                    # return load_ibw(fname)
+                    # return aespm.tools.load_ibw(fname)
                 except FileNotFoundError:
                     print("File not found. Retrying {} times...".format(retries), end='\r')
                     retries += 1
@@ -710,15 +712,15 @@ def ibw_read(fname, retry=10, wait=0.1, lines=False, connection=None):
                     retries += 1
                     time.sleep(wait)
         else:
-            return load_ibw(fname)
+            return aespm.tools.load_ibw(fname)
             # return bw.load(fname)['wave']['wData'].T
     else:
-        download_file(connection=connection, file_path=fname, local_file_name='temp.ibw')
+        aespm.utils.download_file(connection=connection, file_path=fname, local_file_name='temp.ibw')
         time.sleep(wait)
         if lines == True:
             return bw.load('temp.ibw')['wave']['wData'].T
         else:
-            return load_ibw('temp.ibw')
+            return aespm.tools.load_ibw('temp.ibw')
         # return bw.load('temp.ibw')['wave']['wData'].T
     return 0
 

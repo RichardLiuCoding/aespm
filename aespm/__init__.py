@@ -4,6 +4,7 @@ warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 __all__ = ['tools']
 
-from aespm import tools
 from aespm.aespm import *
+
+from aespm import tools
 from aespm import utils
