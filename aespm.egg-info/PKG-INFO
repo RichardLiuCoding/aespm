@@ -1,13 +1,13 @@
 Metadata-Version: 2.1
 Name: aespm
-Version: 1.0.3
-Summary: Asylum Research SPM data analysis packages
+Version: 1.0.4
+Summary: SPM Automation with Python and Machine Learning.
 Home-page: https://github.com/RichardLiuCoding/aespm
 Download-URL: https://github.com/RichardLiuCoding/aespm.git
 Author: Richard (Yu) Liu
 Author-email: yliu206@utk.edu
 License: MIT
-Keywords: SPM,AR,Python,Instrument control,Autonomoous,Machine learning,Data Analysis
+Keywords: SPM,Python,Instrument control,Autonomoous,Machine learning,Data Analysis
 Classifier: Development Status :: 3 - Alpha
 Classifier: Intended Audience :: Developers
 Classifier: Topic :: Software Development :: Build Tools
@@ -19,3 +19,6 @@ Requires-Dist: matplotlib
 Requires-Dist: igor2
 Requires-Dist: paramiko
 Requires-Dist: Pyro5
+
+Python interface that enables local and remote control of Scanning Probe Microscope (SPM) with codes.
+It offers a modular way to write autonomous workflows ranging from simple routine operations, to advanced automatic scientific discovery based on machine learning.
