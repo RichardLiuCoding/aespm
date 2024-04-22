@@ -10,6 +10,8 @@ It offers a modular way to write autonomous workflows ranging from simple routin
 pip install aespm
 ```
 
+For AR SPM users, download the "UserFunctions.ipf" from [**aespm/user functions**](https://github.com/RichardLiuCoding/aespm/blob/main/aespm/user%20functions/UserFunctions.ipf) folder and put it in "Documents/AsylumResearch/UserIncludes" folder so that it will automatically loaded at AR startup. You only need to do it one time after installing aespm.
+
 # Examples
 
 For more detailed tutorials and example workflows, please take a look at [**aespm/notebooks**](https://github.com/RichardLiuCoding/aespm/tree/main/aespm/notebooks) folder.
@@ -23,6 +25,28 @@ exp = ae.Experiment(folder=folder)
 ```
 
 There is a list of default actions in the end of this page.
+
+## Work from a remote cluster
+
+Start a new anaconda terminal and run the following codes on your **local** computer:
+
+```Python
+import aespm as ae
+host = "your_ip_address"
+aespm.utils.connect(host=host)
+```
+
+On the **remote** server, you only need the following information to build the connection:
+
+```Python
+# host = 'IP_address_local_desktop'
+# username = 'your_login_name'
+# password = 'your_login_credential'
+
+exp = ae.Experiment(folder=folder, connection=[host, username, password])
+```
+
+Then all your local notebooks should run automatically with this exp object!
 
 ## Execute a single command
 To start a downwards scan:
