@@ -28,7 +28,12 @@ try:
 	# Create bash file to execute commands in hte buffer file
 	if not os.path.exists(os.path.join(buffer_path, 'SendToIgor.bat')):
 		with open(os.path.join(buffer_path, 'SendToIgor.bat'), 'w') as fopen:
-			fopen.write('"C:\\AsylumResearch\\v19\\RealTime\\Igor Pro Folder\\Igor.exe" "{}"'.format(os.path.join(buffer_path, 'ToIgor.arcmd')))
+			if os.path.exists("C:\\AsylumResearch\\v19"):
+				fopen.write('"C:\\AsylumResearch\\v19\\RealTime\\Igor Pro Folder\\Igor.exe" "{}"'.format(os.path.join(buffer_path, 'ToIgor.arcmd')))
+			elif os.path.exists("C:\\AsylumResearch\\v18"):
+				fopen.write('"C:\\AsylumResearch\\v18\\RealTime\\Igor Pro Folder\\Igor.exe" "{}"'.format(os.path.join(buffer_path, 'ToIgor.arcmd')))
+			else:
+				print("No supported AR versions!")
 
 	# Copy the user functions into the default include folder of AR
 	# shutil.copy(os.path.join(aespm.__path__, 'user functions', 'UserFunctions.ipf'), os.path.join(doc_path, 'AsylumResearch', 'UserIncludes'))
