@@ -1,0 +1,21 @@
+Metadata-Version: 2.1
+Name: aespm
+Version: 1.0.0
+Summary: Asylum Research SPM data analysis packages
+Home-page: https://github.com/RichardLiuCoding/aespm
+Download-URL: https://github.com/RichardLiuCoding/aespm.git
+Author: Richard (Yu) Liu
+Author-email: yliu206@utk.edu
+License: MIT
+Keywords: SPM,AR,Python,Instrument control,Autonomoous,Machine learning,Data Analysis
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: matplotlib
+Requires-Dist: igor2
+Requires-Dist: paramiko
+Requires-Dist: Pyro5
