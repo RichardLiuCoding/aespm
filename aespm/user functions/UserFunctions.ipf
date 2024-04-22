@@ -8,6 +8,7 @@
 #include ":AsylumResearch:Code3D:UserPanels:DART", optional
 #include ":AsylumResearch:Code3D:PZTHyst"
 
+// Function to get tuning data
 Function GetTune()
     String FileName = "C:\\Users\\Asylum User\\Documents\\buffer\\Tune.ibw"
     String DataFolder = GetDF("Main")
@@ -22,6 +23,7 @@ Function GetTune()
     Save/C/O/P=SaveImage TuneScope as FileName
 End //GetTune
 
+// Function to read the meter panels
 Function GetMeter()
     String FileName = "C:\\Users\\Asylum User\\Documents\\buffer\\Meter.ibw"
     String DataFolder = GetDF("Main")
@@ -34,6 +36,7 @@ Function GetMeter()
     Save/C/O/P=SaveImage MeterRead as FileName
 End //GetTune
 
+// FUnction to change base filename
 Function ChangeName(NewName)
     String NewName
     Struct WMSetvariableAction ButtonStruct
@@ -45,7 +48,7 @@ Function ChangeName(NewName)
     BaseNameSetVarFunc(ButtonStruct)
 End //
 
-
+// Function to move stage
 Function MoveStage(Direction)
     String Direction
     Struct WMButtonAction ButtonStruct
@@ -56,6 +59,7 @@ Function MoveStage(Direction)
     StageButtonFunc(ButtonStruct)
 End //
 
+// Function to change Drive amplitude and setpoint at the same time
 Function SetDriveAmpAndSetpoint(NewDriveAmp,NewSetpoint)
             	Variable NewDriveAmp, NewSetpoint
                 

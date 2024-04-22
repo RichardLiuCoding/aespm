@@ -16,7 +16,7 @@ import pickle
 
 import aespm
 
-buffer_path = os.path.join(os.path.expanduser('~'), 'buffer')
+buffer_path = os.path.join(os.path.expanduser('~'), 'Documents', 'buffer')
 command_buffer = os.path.join(buffer_path, 'ToIgor.arcmd')
 read_out_buffer = os.path.join(buffer_path, 'readout.txt')
 bash_buffer = os.path.join(buffer_path, 'SendToIgor.bat')
@@ -329,7 +329,7 @@ def read_spm(key, commands=None, connection=None):
                     command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
                 else:
                     command += 'ReadOut[{}] = GV("{}")\n'.format(i, key[i])
-            end = r'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer)
+            end = 'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer)
             file = open(command_buffer,"w",encoding = 'utf-8')
             file.writelines(start+command+end)
             file.close()
@@ -356,7 +356,7 @@ def read_spm(key, commands=None, connection=None):
                     command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
                 else:
                     command += 'ReadOut[{}] = GV("{}")\n'.format(i, key[i])
-            end = r'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer)
+            end = 'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer)
             commands = start+command+end
             aespm.utils.write_to_remote_file(connection,
                          file_path = command_buffer, data = commands)# doubt as richard
@@ -608,6 +608,20 @@ def move_stage(distance, connection=None):
 
 
 def tune_probe(num=1, path=os.path.join(buffer_path, 'Tune.ibw'), center=None, width=50e3, out=False, connection=None):
+    '''
+    Tune the probe in the DART mode and optionally read the tune data.
+
+    Input:
+        num     - Int: how many times tune will be repeated
+        path    - String: path where the tune result is saved
+        center  - float: center of the tuning frequency range
+        width   - float: frequency range of runing
+        out     - Boolean: flag to indicate if tune data will be output
+    Output:
+        tune    - an AR wave containing frequency and amplitude
+    Example:
+        w = ae.tune_probe(num=2, out=True)
+    '''
     for i in range(num):
         spm_control('OneTuneDART', wait=1, connection=connection)
         spm_control('GetTune', wait=0.5, connection=connection)

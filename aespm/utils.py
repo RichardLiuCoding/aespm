@@ -1,8 +1,9 @@
 import paramiko
 import Pyro5.api
 import subprocess
+import os
 
-buffer_path = os.path.join(os.path.expanduser('~'), 'buffer')
+buffer_path = os.path.join(os.path.expanduser('~'), 'Documents', 'buffer')
 command_buffer = os.path.join(buffer_path, 'ToIgor.arcmd')
 read_out_buffer = os.path.join(buffer_path, 'readout.txt')
 bash_buffer = os.path.join(buffer_path, 'SendToIgor.bat')
@@ -16,7 +17,21 @@ class CommandExecutor:
         except Exception as e:
             return f"Execution Failed: {str(e)}"
 
-def connect(host, port):
+def connect(host, port=9091):
+    '''
+    Start a python server on your local computer. This server can accept
+    commands from a remote cluster.
+
+    Input:
+        host    - String: IP address of the local computer.
+        port    - Int (Optional): the port for the server.
+    Output:
+        N/A
+    Example:
+        import aespm as ae
+        host = 'your_ip_address'
+        ae.utils.connect(host=host)
+    '''
     daemon = Pyro5.server.Daemon(host=host, port=port)  # Bind to the specific IP
     uri = daemon.register(CommandExecutor, "command.executor")
 #     print("Server is ready. Object uri =", uri)
