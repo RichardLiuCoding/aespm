@@ -70,7 +70,7 @@ def ac_scan(self, scanrate, fname):
     ]
     self.execute_sequence(operation=action_list)
     # Load the latest modified file in the data saving folder
-    img = ae.ibw_read(get_files(folder=self.folder)[0])
+    img = ae.ibw_read(ae.get_files(folder=self.folder)[0])
     return img
 
 exp.add_func(ac_scan)
