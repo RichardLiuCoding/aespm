@@ -66,20 +66,23 @@ class IBWData(object):
                 pass
         # Image files:
         else:
-            self.size = self.header['ScanSize']
-            self.mode = self.header['ImagingMode']
-            z_index = self.channels.index('Height')
-            self.z = self.data[z_index]
-            
             try:
-                # Separate DART mode from general PFM mode
-                if self.mode == "PFM Mode":
-                    if len(self.channels) > 4:
-                        self.mode = "DART Mode"
-                        self.channels = ['Height', 'Amplitude1', 'Amplitude2', 'Phase1', 'Phase2', 'Frequency']
-                    else:
-                        self.channels = ['Height', 'Amplitude', 'Deflection', 'Phase']
-            except IndexError:
+                self.size = self.header['ScanSize']
+                self.mode = self.header['ImagingMode']
+                z_index = self.channels.index('Height')
+                self.z = self.data[z_index]
+                
+                try:
+                    # Separate DART mode from general PFM mode
+                    if self.mode == "PFM Mode":
+                        if len(self.channels) > 4:
+                            self.mode = "DART Mode"
+                            self.channels = ['Height', 'Amplitude1', 'Amplitude2', 'Phase1', 'Phase2', 'Frequency']
+                        else:
+                            self.channels = ['Height', 'Amplitude', 'Deflection', 'Phase']
+                except IndexError:
+                    pass
+            except KeyError:
                 pass
 
     def _load_ibw(self, path):
