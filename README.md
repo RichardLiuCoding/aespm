@@ -36,7 +36,7 @@ Start a new anaconda terminal and run the following codes on your **local** comp
 ```Python
 import aespm as ae
 host = "your_ip_address"
-aespm.utils.connect(host=host)
+ae.utils.connect(host=host)
 ```
 
 On the **remote** server, you only need the following information to build the connection:
