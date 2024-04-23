@@ -22,23 +22,32 @@ def connect(host, port=9091):
     Start a python server on your local computer. This server can accept
     commands from a remote cluster.
 
-    Input:
+    Args:
         host    - String: IP address of the local computer.
         port    - Int (Optional): the port for the server.
-    Output:
-        N/A
+        
+    Output: None
     Example:
-        import aespm as ae
-        host = 'your_ip_address'
-        ae.utils.connect(host=host)
+        >>> import aespm as ae
+        >>> host = 'your_ip_address'
+        >>> ae.utils.connect(host=host)
     '''
     daemon = Pyro5.server.Daemon(host=host, port=port)  # Bind to the specific IP
     uri = daemon.register(CommandExecutor, "command.executor")
-#     print("Server is ready. Object uri =", uri)
+    # print("Server is ready. Object uri =", uri)
     daemon.requestLoop()  # Start the request loop
 
 
 def execute_exe_on_server(exe_path, uri, args):
+    """Execute an executable on the remote server.
+
+    Args:
+        exe_path (string): path to the executable
+        uri (string): address of server
+        args (string): arguments to pass to the executable
+    
+    Returns: None
+    """
     
     #   print("Connecting to server at", uri)
     command_executor = Pyro5.api.Proxy(uri)
@@ -46,6 +55,8 @@ def execute_exe_on_server(exe_path, uri, args):
     #   print("Server response:", response)
 
 def main_exe_on_server():
+    """Execute the main executable on the remote server.
+    """
     exe_path = r"C:\AsylumResearch\v19\RealTime\Igor Pro Folder\Igor.exe"
     args = command_buffer
     execute_exe_on_server(exe_path, args)
