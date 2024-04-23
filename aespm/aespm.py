@@ -75,6 +75,7 @@ class Experiment(object):
         # Remote control
         if connection is not None:
             host, username, password = connection
+            self.host = host
             self.connection, self.client = aespm.utils.return_connection(host, username, password)
         else:
             self.connection, self.client = None, None
@@ -273,7 +274,7 @@ class Experiment(object):
             else:
                 print("Unsupported operations in the log.")
 
-def write_spm(commands, connection=None, wait=0.35):
+def write_spm(commands, connection=None, wait=0.35, host=None):
     '''
     Control Jupiter by writing and executing Igor command in the ToIgor.arcmd file.
 
@@ -304,11 +305,11 @@ def write_spm(commands, connection=None, wait=0.35):
     else:
         aespm.utils.write_to_remote_file(connection,
                              file_path = command_buffer, data = commands)
-        aespm.utils.main_exe_on_server()
+        aespm.utils.main_exe_on_server(host=host)
         time.sleep(wait)
 
 
-def read_spm(key, commands=None, connection=None):
+def read_spm(key, commands=None, connection=None, host=None):
     '''
     Read Jupiter parameters by exporting them into readout.txt file.
 
@@ -368,7 +369,7 @@ def read_spm(key, commands=None, connection=None):
             commands = start+command+end
             aespm.utils.write_to_remote_file(connection,
                          file_path = command_buffer, data = commands)# doubt as richard
-            aespm.utils.main_exe_on_server()
+            aespm.utils.main_exe_on_server(host=host)
 
             s = aespm.utils.read_remote_file(connection, read_out_buffer)
 
@@ -378,7 +379,7 @@ def read_spm(key, commands=None, connection=None):
             aespm.utils.write_to_remote_file(connection,
                              file_path = command_buffer, data = commands)# doubt as richard
 
-            aespm.utils.main_exe_on_server()
+            aespm.utils.main_exe_on_server(host=host)
             s = aespm.utils.read_remote_file(connection, read_out_buffer)
 
             return [float(k) for k in s.decode('utf-8').split('\r')[:-1]]

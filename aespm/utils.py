@@ -45,7 +45,7 @@ def connect(host, port=9091):
     daemon.requestLoop()  # Start the request loop
 
 
-def execute_exe_on_server(exe_path, uri, args):
+def execute_exe_on_server(exe_path, args, host, port=9091):
     """Execute an executable on the remote server.
 
     Args:
@@ -56,17 +56,18 @@ def execute_exe_on_server(exe_path, uri, args):
     Returns: None
     """
     
+    uri = "PYRO:command.executor@{}:{}".format(host, port)
     #   print("Connecting to server at", uri)
     command_executor = Pyro5.api.Proxy(uri)
     response = command_executor.execute_exe_with_args(exe_path, args)
     #   print("Server response:", response)
 
-def main_exe_on_server():
+def main_exe_on_server(host):
     """Execute the main executable on the remote server.
     """
     exe_path = r"C:\AsylumResearch\v19\RealTime\Igor Pro Folder\Igor.exe"
-    args = command_buffer
-    execute_exe_on_server(exe_path, args)
+    # args = command_buffer
+    execute_exe_on_server(exe_path, args=command_buffer, host=host)
 
 def return_connection(host: str, username: str, password: str):
     """
