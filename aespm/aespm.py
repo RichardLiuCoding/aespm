@@ -24,10 +24,10 @@ if platform.system() == 'Windows':
     read_out_buffer = os.path.join(buffer_path, 'readout.txt')
     bash_buffer = os.path.join(buffer_path, 'SendToIgor.bat')
 else:
-    buffer_path = r"C:Users\Asylum Users\Documents\buffer"
-    command_buffer = r"C:Users\Asylum Users\Documents\buffer\ToIgor.arcmd"
-    read_out_buffer = r"C:Users\Asylum Users\Documents\buffer\readout.txt"
-    bash_buffer = r"C:Users\Asylum Users\Documents\buffer\SendToIgor.bat"
+    buffer_path = r"C:Users\Asylum User\Documents\buffer"
+    command_buffer = r"C:Users\Asylum User\Documents\buffer\ToIgor.arcmd"
+    read_out_buffer = r"C:Users\Asylum User\Documents\buffer\readout.txt"
+    bash_buffer = r"C:Users\Asylum User\Documents\buffer\SendToIgor.bat"
 
 class Experiment(object):
     '''
