@@ -325,11 +325,11 @@ def read_spm(key, commands=None, connection=None):
             start = 'Make/N = ({})/O ReadOut // change N to number of parameters to read out\n'.format(N)
             command = ''
             for i in range(N):
-                if key[i] == 'PIDSLoop.0.Setpoint' or key[i] == 'PIDSLoop.1.Setpoint':
+                if key[i].startswith('PIDSLoop'): # == 'PIDSLoop.0.Setpoint' or key[i] == 'PIDSLoop.1.Setpoint':
                     command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
                 else:
                     command += 'ReadOut[{}] = GV("{}")\n'.format(i, key[i])
-            end = r'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer)
+            end = r'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer.replace('\\', '\\\\'))
             file = open(command_buffer,"w",encoding = 'utf-8')
             file.writelines(start+command+end)
             file.close()
@@ -352,11 +352,11 @@ def read_spm(key, commands=None, connection=None):
             start = 'Make/N = ({})/O ReadOut // change N to number of parameters to read out\n'.format(N)
             command = ''
             for i in range(N):
-                if key[i] == 'PIDSLoop.0.Setpoint' or key[i] == 'PIDSLoop.1.Setpoint':
+                if key[i].startswith('PIDSLoop'): # == 'PIDSLoop.0.Setpoint' or key[i] == 'PIDSLoop.1.Setpoint':
                     command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
                 else:
                     command += 'ReadOut[{}] = GV("{}")\n'.format(i, key[i])
-            end = r'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer)
+            end = r'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer.replace('\\', '\\\\'))
             commands = start+command+end
             aespm.utils.write_to_remote_file(connection,
                          file_path = command_buffer, data = commands)# doubt as richard
