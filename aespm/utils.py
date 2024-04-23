@@ -62,7 +62,7 @@ def execute_exe_on_server(exe_path, args, host, port=9091):
     response = command_executor.execute_exe_with_args(exe_path, args)
     #   print("Server response:", response)
 
-def main_exe_on_server(host=10.128.163.6):
+def main_exe_on_server(host=None):
     """Execute the main executable on the remote server.
     """
     exe_path = r"C:\AsylumResearch\v19\RealTime\Igor Pro Folder\Igor.exe"
