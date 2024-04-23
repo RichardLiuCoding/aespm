@@ -16,7 +16,13 @@ import pickle
 
 import aespm
 
-buffer_path = os.path.join(os.path.expanduser('~'), 'Documents', 'buffer')
+import platform
+
+if platform.system() == 'Windows':
+    buffer_path = os.path.join(os.path.expanduser('~'), 'Documents', 'buffer')
+else:
+    buffer_path = r"C:Users\Asylum Users\Documents\buffer"
+    
 command_buffer = os.path.join(buffer_path, 'ToIgor.arcmd')
 read_out_buffer = os.path.join(buffer_path, 'readout.txt')
 bash_buffer = os.path.join(buffer_path, 'SendToIgor.bat')
