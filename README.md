@@ -4,7 +4,7 @@ Python interface that enables local and remote control of Scanning Probe Microsc
 
 It offers a modular way to write autonomous workflows ranging from simple routine operations, to advanced automatic scientific discovery based on machine learning.
 
-# Installation
+# 1. Installation
 
 ```Python
 pip install aespm
@@ -15,11 +15,11 @@ For AR SPM users, download the "UserFunctions.ipf" from [**aespm/user functions*
 ps, if you software is already running, you need to click "Programming -> Rescan User Includes" to make this change effective.
 
 
-# Examples
+# 2. Examples
 
 For more detailed tutorials and example workflows, please take a look at [**aespm/notebooks**](https://github.com/RichardLiuCoding/aespm/tree/main/aespm/notebooks) folder.
 
-## Create an aespm.Experiment() object
+## 2-1. Create an aespm.Experiment() object
 
 ```Python
 import aespm as ae
@@ -29,7 +29,7 @@ exp = ae.Experiment(folder=folder)
 
 There is a list of default actions in the end of this page.
 
-## Work from a remote cluster
+## 2-2. Work from a remote cluster
 
 Start a new anaconda terminal and run the following codes on your **local** computer:
 
@@ -51,13 +51,13 @@ exp = ae.Experiment(folder=folder, connection=[host, username, password])
 
 Then all your local notebooks should run automatically with this exp object!
 
-## Execute a single command
+## 2-3. Execute a single command
 To start a downwards scan:
 ```Python
 exp.execute('DownScan', wait=1.5)
 ```
 
-## Define a custom action based on a list of sequential operations
+## 2-4. Define a custom action based on a list of sequential operations
 To start a scan with given save name and scan rate:
 
 ```Python
@@ -91,7 +91,7 @@ img = exp.ac_scan(1, 'NewImage')
 
 This is how a functional block is created.
 
-## Keep track of experiment parameters with exp.param dict
+## 2-5. Keep track of experiment parameters with exp.param dict
 
 Let's store some useful parameters in the **exp.param**
 
@@ -112,21 +112,21 @@ for key in p:
 
 This is particularly useful when you need to track many different data formats (list, np.ndarray, tensors) when integrating with machine learning algorithms.
 
-## Combinatorial library exploration
+## 2-6. Combinatorial library exploration
 [Link](https://drive.google.com/file/d/1kcdGX46scTYePuiLnQiLbcp94MKt3_AG/view?usp=sharing) to the video of combinatorial exploration on a grid.
 
-## Deek Kernel Learning on Jupiter
+## 2-7. Deek Kernel Learning on Jupiter
 [Link](https://drive.google.com/file/d/1fOdsmjxh1PEiKI6Drm49-SOtuo5KTxVx/view?usp=share_link) to the video of Deep Kernel active learning controlled from a supercomputer.
 
-# Three levels of integration
+# 3. Three levels of integration
 
-## spm_contrl()
+## 3-1. spm_contrl()
 
 The key function in the interface layer is ```spm_control()```, which unifies the interaction with SPM controller.
 
 ```spm_control()``` is a wrapper of lower-level ```write_spm()``` and ```read_spm()```. It translates hyper-language actions that are familiar to users to instrument-specific codes/commands that controller can understand.
 
-## Experiment object
+## 3-2. Experiment object
 
 This is the fundamental object for AE workflows.
 
@@ -136,7 +136,7 @@ This is the fundamental object for AE workflows.
 * **exp.param** is a dict to keep track of experimental parameters and ML intermediate data
 * It handles file I/O, SSH file transfer and connection automatically
 
-## Functional blocks and workflows
+## 3-3. Functional blocks and workflows
 
 Functional blocks are defined based on a list of sequential actions that achieve one major task:
 * Start an AC scan and load and plot the acquired image when it's done
