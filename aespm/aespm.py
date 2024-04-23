@@ -329,7 +329,7 @@ def read_spm(key, commands=None, connection=None):
                     command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
                 else:
                     command += 'ReadOut[{}] = GV("{}")\n'.format(i, key[i])
-            end = 'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer)
+            end = r'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer)
             file = open(command_buffer,"w",encoding = 'utf-8')
             file.writelines(start+command+end)
             file.close()
@@ -356,7 +356,7 @@ def read_spm(key, commands=None, connection=None):
                     command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
                 else:
                     command += 'ReadOut[{}] = GV("{}")\n'.format(i, key[i])
-            end = 'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer)
+            end = r'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer)
             commands = start+command+end
             aespm.utils.write_to_remote_file(connection,
                          file_path = command_buffer, data = commands)# doubt as richard
