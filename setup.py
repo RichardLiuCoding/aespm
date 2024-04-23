@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
   name = 'aespm',
-  version = '1.0.4',
+  version = '1.0.5',
   packages = find_packages(),
   license='MIT',
   description = 'SPM Automation with Python and Machine Learning.',
