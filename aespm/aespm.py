@@ -274,7 +274,7 @@ class Experiment(object):
             else:
                 print("Unsupported operations in the log.")
 
-def write_spm(commands, connection=None, wait=0.35, host=None):
+def write_spm(commands, connection=None, wait=0.35):
     '''
     Control Jupiter by writing and executing Igor command in the ToIgor.arcmd file.
 
@@ -305,11 +305,11 @@ def write_spm(commands, connection=None, wait=0.35, host=None):
     else:
         aespm.utils.write_to_remote_file(connection,
                              file_path = command_buffer, data = commands)
-        aespm.utils.main_exe_on_server(host=host)
+        aespm.utils.main_exe_on_server()
         time.sleep(wait)
 
 
-def read_spm(key, commands=None, connection=None, host=None):
+def read_spm(key, commands=None, connection=None):
     '''
     Read Jupiter parameters by exporting them into readout.txt file.
 
@@ -369,7 +369,7 @@ def read_spm(key, commands=None, connection=None, host=None):
             commands = start+command+end
             aespm.utils.write_to_remote_file(connection,
                          file_path = command_buffer, data = commands)# doubt as richard
-            aespm.utils.main_exe_on_server(host=host)
+            aespm.utils.main_exe_on_server()
 
             s = aespm.utils.read_remote_file(connection, read_out_buffer)
 
@@ -379,7 +379,7 @@ def read_spm(key, commands=None, connection=None, host=None):
             aespm.utils.write_to_remote_file(connection,
                              file_path = command_buffer, data = commands)# doubt as richard
 
-            aespm.utils.main_exe_on_server(host=host)
+            aespm.utils.main_exe_on_server()
             s = aespm.utils.read_remote_file(connection, read_out_buffer)
 
             return [float(k) for k in s.decode('utf-8').split('\r')[:-1]]
@@ -543,7 +543,7 @@ def spm_control(action, value=None, wait=0.35, connection=None):
     else:
         raise ValueError("Function not implemented yet.")
 
-    write_spm(commands=commands, connection=connection, wait=wait)
+    write_spm(commands=commands, connection=connection, wait=wait, )
 
 
 # Move the tip 
@@ -583,7 +583,7 @@ def move_tip(r, v0=None, s=None, connection=None):
     command1 = 'td_WriteValue("PIDSLoop.0.Setpoint",{})\n'.format(vx+v0x)
     command2 = 'td_WriteValue("PIDSLoop.1.Setpoint",{})\n'.format(vy+v0y)
 
-    write_spm(commands=command1+command2, connection=connection)
+    write_spm(commands=command1+command2, connection=connection, )
 
 
 def move_stage(distance, connection=None):
