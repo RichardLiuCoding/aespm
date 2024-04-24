@@ -15,19 +15,22 @@ import types
 import pickle
 
 import aespm
+from aespm.utils import shared
 
 import platform
 
 if platform.system() == 'Windows':
-    buffer_path = os.path.join(os.path.expanduser('~'), 'Documents', 'buffer')
-    command_buffer = os.path.join(buffer_path, 'ToIgor.arcmd')
-    read_out_buffer = os.path.join(buffer_path, 'readout.txt')
-    bash_buffer = os.path.join(buffer_path, 'SendToIgor.bat')
+    _buffer_path = os.path.join(os.path.expanduser('~'), 'Documents', 'buffer')
+    _command_buffer = os.path.join(_buffer_path, 'ToIgor.arcmd')
+    _read_out_buffer = os.path.join(_buffer_path, 'readout.txt')
+    _bash_buffer = os.path.join(_buffer_path, 'SendToIgor.bat')
+    _exe_path = r"C:\AsylumResearch\v19\RealTime\Igor Pro Folder\Igor.exe"
 else:
-    buffer_path = r"C:\Users\Asylum User\Documents\buffer"
-    command_buffer = r"C:\Users\Asylum User\Documents\buffer\ToIgor.arcmd"
-    read_out_buffer = r"C:\Users\Asylum User\Documents\buffer\readout.txt"
-    bash_buffer = r"C:\Users\Asylum User\Documents\buffer\SendToIgor.bat"
+    _buffer_path = r"C:\Users\Asylum User\Documents\buffer"
+    _command_buffer = r"C:\Users\Asylum User\Documents\buffer\ToIgor.arcmd"
+    _read_out_buffer = r"C:\Users\Asylum User\Documents\buffer\readout.txt"
+    _bash_buffer = r"C:\Users\Asylum User\Documents\buffer\SendToIgor.bat"
+    _exe_path = r"C:\AsylumResearch\v19\RealTime\Igor Pro Folder\Igor.exe"
 
 class Experiment(object):
     '''
@@ -75,8 +78,15 @@ class Experiment(object):
         # Remote control
         if connection is not None:
             host, username, password = connection
-            self.host = host
+
+            global shared
+            shared.set_host(host)
+
+            local_info = aespm.utils.get_local_directory(host=host).split('$')
+            shared.set_value(local_info)
+
             self.connection, self.client = aespm.utils.return_connection(host, username, password)
+
         else:
             self.connection, self.client = None, None
 
@@ -295,17 +305,17 @@ def write_spm(commands, connection=None, wait=0.35):
         write_spm('ARExecuteControl("StartPIDSLoop0","PIDSLoopPanel",0,"")', connection=connection)
     '''
     if connection==None:
-        file = open(command_buffer,"w",encoding = 'utf-8')
+        file = open(_command_buffer,"w",encoding = 'utf-8')
         file.writelines(commands)
         file.close()
 
-        p = Popen(bash_buffer)
+        p = Popen(_bash_buffer)
         p.wait()
         time.sleep(wait)
     else:
         aespm.utils.write_to_remote_file(connection,
-                             file_path = command_buffer, data = commands)
-        aespm.utils.main_exe_on_server()
+                             file_path = _command_buffer, data = commands)
+        aespm.utils.main_exe_on_server(host=shared._host)
         time.sleep(wait)
 
 
@@ -338,22 +348,22 @@ def read_spm(key, commands=None, connection=None):
                     command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
                 else:
                     command += 'ReadOut[{}] = GV("{}")\n'.format(i, key[i])
-            end = r'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer.replace('\\', '\\\\'))
-            file = open(command_buffer,"w",encoding = 'utf-8')
+            end = r'Save/O/G/J ReadOut as "{}"'.format(_read_out_buffer.replace('\\', '\\\\'))
+            file = open(_command_buffer,"w",encoding = 'utf-8')
             file.writelines(start+command+end)
             file.close()
-            p = Popen(bash_buffer)
+            p = Popen(_bash_buffer)
             p.wait()
-            return np.loadtxt(read_out_buffer)
+            return np.loadtxt(_read_out_buffer)
 
         else:
-            file = open(command_buffer,"w",encoding = 'utf-8')
+            file = open(_command_buffer,"w",encoding = 'utf-8')
             file.writelines(commands)
             file.close()
 
-            p = Popen(bash_buffer)
+            p = Popen(_bash_buffer)
             p.wait()
-            return np.loadtxt(read_out_buffer)
+            return np.loadtxt(_read_out_buffer)
 
     else:
         if commands == None:
@@ -365,22 +375,22 @@ def read_spm(key, commands=None, connection=None):
                     command += 'ReadOut[{}] = td_ReadValue("{}")\n'.format(i, key[i])
                 else:
                     command += 'ReadOut[{}] = GV("{}")\n'.format(i, key[i])
-            end = r'Save/O/G/J ReadOut as "{}"'.format(read_out_buffer.replace('\\', '\\\\'))
+            end = r'Save/O/G/J ReadOut as "{}"'.format(_read_out_buffer.replace('\\', '\\\\'))
             commands = start+command+end
             aespm.utils.write_to_remote_file(connection,
-                         file_path = command_buffer, data = commands)# doubt as richard
-            aespm.utils.main_exe_on_server()
+                         file_path = _command_buffer, data = commands)# doubt as richard
+            aespm.utils.main_exe_on_server(host=shared._host)
 
-            s = aespm.utils.read_remote_file(connection, read_out_buffer)
+            s = aespm.utils.read_remote_file(connection, _read_out_buffer)
 
             return [float(k) for k in s.decode('utf-8').split('\r')[:-1]]
 
         else:
             aespm.utils.write_to_remote_file(connection,
-                             file_path = command_buffer, data = commands)# doubt as richard
+                             file_path = _command_buffer, data = commands)# doubt as richard
 
-            aespm.utils.main_exe_on_server()
-            s = aespm.utils.read_remote_file(connection, read_out_buffer)
+            aespm.utils.main_exe_on_server(host=shared._host)
+            s = aespm.utils.read_remote_file(connection, _read_out_buffer)
 
             return [float(k) for k in s.decode('utf-8').split('\r')[:-1]]
         
@@ -461,7 +471,8 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ['FDTrigger', 'FDTriggerPoint'],
         ['ZeroPD', 'PDZero'],
         ['DARTTrigger', 'SSTrigger'],
-        ['DARTAmp', 'DART v_ac']
+        ['DARTAmp', 'DART v_ac'],
+        ['SampleHeight', 'Sample Height'],
         
     ]
 
@@ -520,6 +531,7 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ["ZeroLDPDButton_1","MasterMotorPanel",0], 
         ["TriggerPointSetVar_2","DARTSpectroscopy", 1],
         ["DriveAmplitudeSetVar_3", "DART", 1], 
+        ['PV("SampleHeight", {})'.format(value), 4],
     ]
     # Construct the action dict
     for i, key in enumerate(key_list):
@@ -616,7 +628,7 @@ def move_stage(distance, connection=None):
         write_spm(commands='MoveStage("{}")'.format(y_direction), connection=connection)
 
 
-def tune_probe(num=1, path=os.path.join(buffer_path, 'Tune.ibw'), center=None, width=50e3, out=False, connection=None):
+def tune_probe(num=1, path=os.path.join(_buffer_path, 'Tune.ibw'), center=None, width=50e3, out=False, connection=None):
     '''
     Tune the probe in the DART mode and optionally read the tune data.
 
@@ -721,8 +733,8 @@ def ibw_read(fname, retry=10, wait=0.1, lines=False, connection=None):
         if lines==True:
             while retries < retry:
                 try:
-                    shutil.copy(fname, os.path.join(buffer_path, 'copy.ibw'))
-                    data = bw.load(os.path.join(buffer_path, 'copy.ibw'))
+                    shutil.copy(fname, os.path.join(_buffer_path, 'copy.ibw'))
+                    data = bw.load(os.path.join(_buffer_path, 'copy.ibw'))
                     wave = data['wave']['wData']
                     return wave.T
                     # return aespm.tools.load_ibw(fname)

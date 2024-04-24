@@ -2,9 +2,9 @@ import warnings
 warnings.filterwarnings("ignore", category=SyntaxWarning)
 #For Python 3.8+, to avoid SyntaxWarning: "is" with a literal. Did you mean "=="?
 
-__all__ = ['aespm']
+__all__ = ['experiment']
 
-from aespm.aespm import *
+from aespm.experiment import *
 
 from aespm import tools
 from aespm import utils

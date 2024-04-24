@@ -9,11 +9,36 @@ if platform.system() == 'Windows':
     command_buffer = os.path.join(buffer_path, 'ToIgor.arcmd')
     read_out_buffer = os.path.join(buffer_path, 'readout.txt')
     bash_buffer = os.path.join(buffer_path, 'SendToIgor.bat')
-else:
-    buffer_path = r"C:\Users\Asylum User\Documents\buffer"
-    command_buffer = r"C:\Users\Asylum User\Documents\buffer\ToIgor.arcmd"
-    read_out_buffer = r"C:\Users\Asylum User\Documents\buffer\readout.txt"
-    bash_buffer = r"C:\Users\Asylum User\Documents\buffer\SendToIgor.bat"
+    
+    if os.path.exists("C:\\AsylumResearch\\v19"):
+        exe_path = "C:\\AsylumResearch\\v19\\RealTime\\Igor Pro Folder\\Igor.exe"
+    elif os.path.exists("C:\\AsylumResearch\\v18"):
+        exe_path = "C:\\AsylumResearch\\v18\\RealTime\\Igor Pro Folder\\Igor.exe"
+    else:
+        exe_path = ""
+
+import aespm
+from aespm import experiment
+
+class SharedInfo:
+    '''
+    A class to pass host and local computer directory info across the package.
+    '''
+    def __init__(self):
+        self._buffer_path = ''
+        self._command_buffer = ''
+        self._read_out_buffer = ''
+        self._buffer_path = ''
+        self._exe_path = ''
+        self._host = ''
+
+    def set_host(self, value):
+        self._host = value
+    
+    def set_value(self, values):
+        self._buffer_path, self._command_buffer, self._read_out_buffer, self._bash_buffer, self._exe_path = values
+
+shared = SharedInfo()
 
 @Pyro5.api.expose
 class CommandExecutor:
@@ -23,6 +48,8 @@ class CommandExecutor:
             p.wait()
         except Exception as e:
             return f"Execution Failed: {str(e)}"
+    def get_local_dir(self):
+        return "$".join([buffer_path, command_buffer, read_out_buffer, bash_buffer, exe_path])
 
 def connect(host, port=9091):
     '''
@@ -44,8 +71,22 @@ def connect(host, port=9091):
     # print("Server is ready. Object uri =", uri)
     daemon.requestLoop()  # Start the request loop
 
+def get_local_directory(host=shared._host, port=9091):
+    """Retrieve the buffer path on the local computer.
 
-def execute_exe_on_server(exe_path, args, host, port=9091):
+    Args:
+        uri (string): address of server
+        args (string): arguments to pass to the executable
+    
+    Returns: "$".join([buffer_path, command_buffer, read_out_buffer, bash_buffer, exe_path])
+    """
+    
+    uri = "PYRO:command.executor@{}:{}".format(host, port)
+    command_executor = Pyro5.api.Proxy(uri)
+    response = command_executor.get_local_dir()
+    return response
+
+def execute_exe_on_server(exe_path, args, host=shared._host, port=9091):
     """Execute an executable on the remote server.
 
     Args:
@@ -55,19 +96,18 @@ def execute_exe_on_server(exe_path, args, host, port=9091):
     
     Returns: None
     """
-    
     uri = "PYRO:command.executor@{}:{}".format(host, port)
     #   print("Connecting to server at", uri)
     command_executor = Pyro5.api.Proxy(uri)
     response = command_executor.execute_exe_with_args(exe_path, args)
     #   print("Server response:", response)
 
-def main_exe_on_server(host=None):
+def main_exe_on_server(host=shared._host):
     """Execute the main executable on the remote server.
     """
-    exe_path = r"C:\AsylumResearch\v19\RealTime\Igor Pro Folder\Igor.exe"
-    # args = command_buffer
-    execute_exe_on_server(exe_path, args=command_buffer, host=host)
+    exe_path = shared._exe_path
+    # args = aespm._command_buffer
+    execute_exe_on_server(exe_path, args=shared._command_buffer, host=host)
 
 def return_connection(host: str, username: str, password: str):
     """

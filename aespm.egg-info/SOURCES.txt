@@ -1,7 +1,7 @@
 README.md
 setup.py
 aespm/__init__.py
-aespm/aespm.py
+aespm/experiment.py
 aespm/tools.py
 aespm/utils.py
 aespm.egg-info/PKG-INFO
