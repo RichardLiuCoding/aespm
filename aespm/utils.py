@@ -24,7 +24,10 @@ if platform.system() == 'Windows':
 class SharedInfo:
     '''
     A class to pass host and local computer directory info across the package.
-    
+    Args:
+        value (str): IP address of the local computer.
+        values (tuple): 
+    Returns: None
     '''
     def __init__(self, value, values):
 
