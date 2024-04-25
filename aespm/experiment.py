@@ -15,7 +15,7 @@ import types
 import pickle
 
 import aespm
-from aespm.utils import SharedInfo
+from aespm.utils import shared
 
 import platform
 
@@ -80,7 +80,9 @@ class Experiment(object):
             host, username, password = connection
             local_info = aespm.utils.get_local_directory(host=host).split('$')
             global shared
-            shared = SharedInfo(host, local_info)
+            #shared = SharedInfo(host, local_info)--> future implementation
+            shared.set_values((_buffer_path, _command_buffer, _read_out_buffer, _bash_buffer, _exe_path))
+            shared.set_host(host)
             self.connection, self.client = aespm.utils.return_connection(host, username, password)
 
         else:

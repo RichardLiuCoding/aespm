@@ -29,9 +29,22 @@ class SharedInfo:
         values (tuple): 
     Returns: None
     '''
-    def __init__(self, value, values):
+    def __init__(self):
+        """
+        Later come up with better way to initialize the attributes of the class are accessible in multiple scripts.
+        """
+        self._host = None
+        self._buffer_path = None
+        self._command_buffer = None
+        self._read_out_buffer = None
+        self._bash_buffer = None
+        self._exe_path = None
 
+        
+    def set_host(self, value):
         self._host = value
+    
+    def set_values(self, values):
         self._buffer_path, self._command_buffer, self._read_out_buffer, self._bash_buffer, self._exe_path = values
 
     @property
@@ -60,7 +73,7 @@ class SharedInfo:
         return self._exe_path
     
     
-
+shared = SharedInfo()
 
 
 @Pyro5.api.expose
