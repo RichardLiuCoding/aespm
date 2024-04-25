@@ -15,7 +15,7 @@ import types
 import pickle
 
 import aespm
-from aespm.utils import shared
+from aespm.utils import SharedInfo
 
 import platform
 
@@ -78,13 +78,9 @@ class Experiment(object):
         # Remote control
         if connection is not None:
             host, username, password = connection
-
-            global shared
-            shared.set_host(host)
-
             local_info = aespm.utils.get_local_directory(host=host).split('$')
-            shared.set_value(local_info)
-
+            global shared
+            shared = SharedInfo(host, local_info)
             self.connection, self.client = aespm.utils.return_connection(host, username, password)
 
         else:

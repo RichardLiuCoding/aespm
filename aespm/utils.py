@@ -4,6 +4,9 @@ import subprocess
 import os
 import platform
 
+import aespm
+from aespm import experiment
+
 if platform.system() == 'Windows':
     buffer_path = os.path.join(os.path.expanduser('~'), 'Documents', 'buffer')
     command_buffer = os.path.join(buffer_path, 'ToIgor.arcmd')
@@ -17,28 +20,45 @@ if platform.system() == 'Windows':
     else:
         exe_path = ""
 
-import aespm
-from aespm import experiment
 
 class SharedInfo:
     '''
     A class to pass host and local computer directory info across the package.
-    '''
-    def __init__(self):
-        self._buffer_path = ''
-        self._command_buffer = ''
-        self._read_out_buffer = ''
-        self._buffer_path = ''
-        self._exe_path = ''
-        self._host = ''
-
-    def set_host(self, value):
-        self._host = value
     
-    def set_value(self, values):
+    '''
+    def __init__(self, value, values):
+
+        self._host = value
         self._buffer_path, self._command_buffer, self._read_out_buffer, self._bash_buffer, self._exe_path = values
 
-shared = SharedInfo()
+    @property
+    def host(self):
+        return self._host
+    
+    @property
+    
+    def buffer_path(self):
+        return self._buffer_path
+    
+    @property
+    def command_buffer(self):
+        return self._command_buffer
+    
+    @property
+    def read_out_buffer(self):
+        return self._read_out_buffer
+    
+    @property
+    def bash_buffer(self):
+        return self._bash_buffer
+    
+    @property
+    def exe_path(self):
+        return self._exe_path
+    
+    
+
+
 
 @Pyro5.api.expose
 class CommandExecutor:
