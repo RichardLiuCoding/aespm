@@ -36,6 +36,16 @@ if platform.system() == 'Windows':
 					fopen.write('"C:\\AsylumResearch\\v19\\RealTime\\Igor Pro Folder\\Igor.exe" "{}"'.format(os.path.join(buffer_path, 'ToIgor.arcmd')))
 				elif os.path.exists("C:\\AsylumResearch\\v18"):
 					fopen.write('"C:\\AsylumResearch\\v18\\RealTime\\Igor Pro Folder\\Igor.exe" "{}"'.format(os.path.join(buffer_path, 'ToIgor.arcmd')))
+				elif os.path.exists("C:\\AsylumResearch\\v17"):
+					fopen.write('"C:\\AsylumResearch\\v17\\RealTime\\Igor Pro Folder\\Igor.exe" "{}"'.format(os.path.join(buffer_path, 'ToIgor.arcmd')))
+				elif os.path.exists("C:\\AsylumResearch\\v16"):
+					fopen.write('"C:\\AsylumResearch\\v16\\RealTime\\Igor Pro Folder\\Igor.exe" "{}"'.format(os.path.join(buffer_path, 'ToIgor.arcmd')))
+				elif os.path.exists("C:\\AsylumResearch\\v15"):
+					fopen.write('"C:\\AsylumResearch\\v15\\RealTime\\Igor Pro Folder\\Igor.exe" "{}"'.format(os.path.join(buffer_path, 'ToIgor.arcmd')))
+				elif os.path.exists("C:\\AsylumResearch\\v14"):
+					fopen.write('"C:\\AsylumResearch\\v14\\RealTime\\Igor Pro Folder\\Igor.exe" "{}"'.format(os.path.join(buffer_path, 'ToIgor.arcmd')))
+				elif os.path.exists("C:\\AsylumResearch\\v13"):
+					fopen.write('"C:\\AsylumResearch\\v13\\RealTime\\Igor Pro Folder\\Igor.exe" "{}"'.format(os.path.join(buffer_path, 'ToIgor.arcmd')))
 				else:
 					print("No supported AR versions!")
 
