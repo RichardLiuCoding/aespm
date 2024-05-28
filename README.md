@@ -17,6 +17,8 @@ ps, if you software is already running, you need to click "Programming -> Rescan
 
 ## 1-2. Detailed instruction on installation + Video
 
+[![Watch the video](https://img.youtube.com/vi/DFy6PRU4aiQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=DFy6PRU4aiQ)
+
 Here is a recorded video on how to install aespm and test it: [**Installation Video**](https://drive.google.com/file/d/1LXMVP3gtdKnU6WI4cw9nmy4RmMu1aMhm/view?usp=sharing).
 
 Detailed instructions on installation:
@@ -153,10 +155,27 @@ for key in p:
 This is particularly useful when you need to track many different data formats (list, np.ndarray, tensors) when integrating with machine learning algorithms.
 
 ## 2-6. Combinatorial library exploration
+
+[![Watch the video](https://img.youtube.com/vi/j48KASKfh-M/maxresdefault.jpg)](https://www.youtube.com/watch?v=j48KASKfh-M)
+
 [Link](https://drive.google.com/file/d/1kcdGX46scTYePuiLnQiLbcp94MKt3_AG/view?usp=sharing) to the video of combinatorial exploration on a grid.
 
 ## 2-7. Deek Kernel Learning on Jupiter
+
+[![Watch the video](https://img.youtube.com/vi/x2gE41WHyZE/maxresdefault.jpg)](https://www.youtube.com/watch?v=x2gE41WHyZE)
+
 [Link](https://drive.google.com/file/d/1fOdsmjxh1PEiKI6Drm49-SOtuo5KTxVx/view?usp=share_link) to the video of Deep Kernel active learning controlled from a supercomputer.
+
+## 2-8. Autonomous optimization of SPM in the tapping mode
+
+[![Watch the video](https://img.youtube.com/vi/zOpRc4QvYwQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=zOpRc4QvYwQ)
+
+[Link](https://drive.google.com/file/d/1fOdsmjxh1PEiKI6Drm49-SOtuo5KTxVx/view?usp=share_link) to the video of Deep Kernel active learning controlled from a supercomputer.
+
+## 2-9 Variational Autoencoder to extract specific structures
+
+[![Watch the video](https://img.youtube.com/vi/pAmdRbfFLkI/maxresdefault.jpg)](https://www.youtube.com/watch?v=pAmdRbfFLkI)
+
 
 # 3. Three levels of integration
 
