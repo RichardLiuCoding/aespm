@@ -6,6 +6,7 @@ It offers a modular way to write autonomous workflows ranging from simple routin
 
 # 1. Installation
 
+## 1-1. Quick installation
 ```Python
 pip install aespm
 ```
@@ -13,6 +14,45 @@ pip install aespm
 For AR SPM users, download the "UserFunctions.ipf" from [**aespm/user functions**](https://github.com/RichardLiuCoding/aespm/blob/main/aespm/user%20functions/UserFunctions.ipf) folder and put it in "Documents/AsylumResearch/UserIncludes" folder so that it will automatically loaded at AR startup. You only need to do it one time after installing aespm.
 
 ps, if you software is already running, you need to click "Programming -> Rescan User Includes" to make this change effective.
+
+## 1-2. Detailed instruction on installation + Video
+
+Here is a recorded video on how to install aespm and test it: [**Installation Video**](https://drive.google.com/file/d/1LXMVP3gtdKnU6WI4cw9nmy4RmMu1aMhm/view?usp=sharing).
+
+Detailed instructions on installation:
+1. Make sure you have installed [Anaconda](https://www.anaconda.com/download/success) (An integration of Python Jupyter Notebook and necessary Python libraries for data analysis and visualization)
+2. Search for “Anaconda Prompt” in the start menu (Recommended: right click on the app name and pin it to the taskbar)
+3. Install the aespm package with the following commands: pip install aespm
+4. Go to this [link](https://github.com/RichardLiuCoding/aespm/blob/main/aespm/user%20functions/UserFunctions.ipf) to download the “UserFunctions.ipf” and move this file to the following path: “Documents → AsylumResearch → UserIncludes”
+5. If the AR software has already been started, you need to click "Programming -> Rescan User Includes" to make this change effective.
+6. Go back to the “Anaconda Prompt”, and go to the folder that you want to store your Python notebook with the following actions:
+7. Type in the following commands followed by a space: ```cd ```
+    - Drag the folder into the “Anaconda Prompt” window
+    - Hit “Enter”
+    - Type in the following commands to start a new Python notebook:
+    ```Python
+    jupyter notebook
+    ```
+    - Create a new Python 3 notebook from the option on the top right of the page
+8. Test if the aespm is installed correctly
+    - Import the aespm package:
+    ```Python
+    import aespm as ae
+    ```
+    - Create an experiment object:
+    ```Python
+    folder = r“data_save_folder” # (right click on the folder and select the “Copy Path” option)
+    exp  = ae.Experiment(folder=folder)
+    ```
+    - Let’s check if we can change the saving name:
+    ```Python
+    exp.execute(‘ChangeName’, value=’testing’)
+    ```
+10. Check the tutorial and example notebooks in this [link](https://github.com/RichardLiuCoding/aespm/tree/main/aespm/notebooks)
+11. (Optional) Check the necessary buffer commands and data files are installed correctly
+    - Go to the folder “Documents → buffer” and check if there are following files: “SendToIgor.bat” and “ToIgor.arcmd”
+    - These two files will only be created after the first time you run ```import aespm```
+    - Right click on the “SendToIgor.bat” and select “Edit with Notepad”. Check the version of the AR and make sure it matches the version that you installed 
 
 
 # 2. Examples
