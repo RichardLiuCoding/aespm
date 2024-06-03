@@ -133,12 +133,14 @@ class IBWData(object):
             index_not_nan = np.where(~np.isnan(bias_raw))
 
             bias = bias_raw[index_not_nan]
-            amp, phase1, phase2 = self.data[2][index_not_nan], self.data[3][index_not_nan], self.data[4][index_not_nan]
+            amp, phase1, phase2, freq = self.data[2][index_not_nan], self.data[3][index_not_nan], \
+                        self.data[4][index_not_nan], self.data[5][index_not_nan]
         else:
             bias = self.data[-1]
             amp = self.data[2]
             phase1 = self.data[3]
             phase2 = self.data[4]
+            freq = self.data[5]
 
         phase1 = self._correct_phase_wrapping(phase1)
         phase2 = self._correct_phase_wrapping(phase2)
@@ -162,22 +164,29 @@ class IBWData(object):
         amp_on = np.zeros(length)
         amp_off = np.zeros(length)
 
+        freq_on = np.zeros(length)
+        freq_off = np.zeros(length)
+
         for i in range(length * 2-1):
             if i % 2 == 0: # bias off
                 phase1_off[i//2] = np.mean(phase1[index_bp[i]:index_bp[i+1]])
                 phase2_off[i//2] = np.mean(phase2[index_bp[i]:index_bp[i+1]])
                 amp_off[i//2] = np.mean(amp[index_bp[i]:index_bp[i+1]])
+                freq_off[i//2] = np.mean(freq[index_bp[i]:index_bp[i+1]])
                 bias_off[i//2] = np.mean(bias[index_bp[i]:index_bp[i+1]])
             else:
                 bias_on[i//2] = np.mean(bias[index_bp[i]:index_bp[i+1]])
                 phase1_on[i//2] = np.mean(phase1[index_bp[i]:index_bp[i+1]])
                 phase2_on[i//2] = np.mean(phase2[index_bp[i]:index_bp[i+1]])
                 amp_on[i//2] = np.mean(amp[index_bp[i]:index_bp[i+1]])
+                freq_on[i//2] = np.mean(freq[index_bp[i]:index_bp[i+1]])
         self.bias = bias_on[1:]
         self.phase1_on = phase1_on[1:]
         self.phase1_off = phase1_off[1:]
         self.phase2_on = phase2_on[1:]
         self.phase2_off = phase2_off[1:]
+        self.freq_on = freq_on[1:]
+        self.freq_off = freq_off[1:]
         self.amp_on = amp_on[1:] * np.cos(phase2_off[1:]/180*np.pi)
         self.amp_off = amp_off[1:] * np.cos(phase1_off[1:]/180*np.pi)
 
