@@ -32,7 +32,7 @@ def load_ibw(file, ss=False):
     '''
     
     # Return an IBWData object
-    return IBWData(file)
+    return IBWData(file, ss=ss)
 
 class IBWData(object):
     '''
@@ -52,13 +52,19 @@ class IBWData(object):
     Methods:
         None
     '''
-    def __init__(self, path):
+    def __init__(self, path, ss=False):
         super(IBWData, self).__init__()
 
         self._load_ibw(path)
 
         # Spectroscopy files:
-        if "ARDoIVCurve" in self.header:
+        if ss == True:
+            self.mode = "Spec"
+            try:
+                self._load_ss()
+            except IndexError:
+                pass
+        elif "ARDoIVCurve" in self.header:
             self.mode = "Spec"
             try:
                 self._load_ss()
