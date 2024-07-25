@@ -24,7 +24,7 @@ if platform.system() == 'Windows':
     _command_buffer = os.path.join(_buffer_path, 'ToIgor.arcmd')
     _read_out_buffer = os.path.join(_buffer_path, 'readout.txt')
     _bash_buffer = os.path.join(_buffer_path, 'SendToIgor.bat')
-    _exe_path = r"C:\AsylumResearch\v19\RealTime\Igor Pro Folder\Igor.exe"
+    _exe_path = "C:\\Asylum\\Igor Pro Folder AR15\\Igor.exe"
 else:
     _buffer_path = r"C:\Users\Asylum User\Documents\buffer"
     _command_buffer = r"C:\Users\Asylum User\Documents\buffer\ToIgor.arcmd"
