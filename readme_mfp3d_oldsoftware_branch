@@ -1,0 +1,8 @@
+This branch is dedicated to the adaptation of the AESPM library for the legacy ARSoftware.
+
+The code has been tested on systems with the following configuration:
+- Windows 7
+- Igor Pro 6.3.7.2
+- AR AFM Software Version 15.09.112
+
+Please feel free to ask any questions or request assistance if needed.
