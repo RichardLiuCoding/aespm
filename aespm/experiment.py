@@ -483,9 +483,9 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ['DriveFrequencySetVar_0', 'MasterPanel', 1],
         ['td_WriteValue("Cypher.PIDSLoop.2.SetPoint", {})'.format(value), 4], #['td_WriteValue("Cypher.PIDSLoop.2.SetPoint", {})'.format(value), 4],
         ['StopScan_0', 'MasterPanel', 0],
-        ['ClearForce_1', 'MasterPanel', 0],
+        ['ClearForce_2', 'MasterPanel', 0],
         ['ForceSpotNumberSetVar_1', 'MasterPanel', 0], # 9 
-        ['GoForce_1', 'MasterPanel', 0],
+        ['GoForce_2', 'MasterPanel', 0],
         ['TipVoltageSetVar_0', 'NapPanel', 1],
         ['SurfaceVoltageSetVar_0', 'NapPanel', 1],
         ['SingleForce_1', 'MasterPanel', 0],
