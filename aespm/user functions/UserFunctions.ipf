@@ -39,22 +39,23 @@ End //GetTune
 // FUnction to change base filename
 Function ChangeName(NewName)
     String NewName
-    Struct WMSetvariableAction ButtonStruct
-    ButtonStruct.EventCode = 2
-    ButtonStruct.Win = "MasterPanel"
-    ButtonStruct.CtrlName = "BaseNameSetVar_0"
-    ButtonStruct.SVal = NewName
-    ButtonStruct.DVal = 0
-    BaseNameSetVarFunc(ButtonStruct)
+//    Struct WMSetvariableAction ButtonStruct
+//    ButtonStruct.EventCode = 2
+//    ButtonStruct.Win = "MasterPanel"
+//    ButtonStruct.CtrlName = "BaseNameSetVar_0"
+//    ButtonStruct.SVal = NewName
+//    ButtonStruct.DVal = 0
+//    BaseNameSetVarFunc(ButtonStruct)
+      BaseNameSetVarFunc("BaseNameSetVar_0",Nan,NewName,"BaseName")
 End //
 
 // Function to move stage
-Function MoveStage(Direction)
-    String Direction
-    Struct WMButtonAction ButtonStruct
-    
-    ButtonStruct.EventCode = 2
-    //  ButtonStruct.Win = "MasterPanel"
-    ButtonStruct.CtrlName = Direction
-    StageButtonFunc(ButtonStruct)
-End //
+//Function MoveStage(Direction)
+//    String Direction
+//    Struct WMButtonAction ButtonStruct
+//
+//    ButtonStruct.EventCode = 2
+//    //  ButtonStruct.Win = "MasterPanel"
+//    ButtonStruct.CtrlName = Direction
+//    StageButtonFunc(ButtonStruct)
+//End //
