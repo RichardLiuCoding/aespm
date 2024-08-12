@@ -5,4 +5,32 @@ The code has been tested on systems with the following configuration:
 - Igor Pro 6.3.7.2
 - AR AFM Software Version 15.09.112
 
+
+
+If a version of the client is older than 16.XXX.222 the following code should be dropped into the BeforeFileOpenHook function to run the library:
+
+if (StringMatch(FileStr,"*.ARCMD"))
+FStatus FileRef
+	if (!V_Flag)
+		return 0
+	endif
+		
+	String DataStr
+	DataStr = PadString("",V_LogEOF,0)
+	FBinRead FileRef,DataStr
+	Close(FileRef)
+	DataStr = ReplaceString(num2char(13)+num2char(10),DataStr,"\r",1)
+	DataStr = ReplaceString(num2char(10),DataStr,"\r",1)
+	Variable A, nop = ItemsInList(DataStr,"\r")
+	for (A = 0;A < nop;A += 1)
+		Execute/Q/Z StringFromList(A,DataStr,"\r")
+	endfor
+	return 1
+endif
+
+
+BeforeFileOpenHook function is in the 
+.../Igor Pro Folder/AsylumResearch/Code3D/Offline.ipf
+
+
 Please feel free to ask any questions or request assistance if needed.
