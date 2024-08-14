@@ -4,11 +4,6 @@ warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 __all__ = ['experiment']
 
-from aespm.experiment import *
-
-from aespm import tools
-from aespm import utils
-
 # If there is no buffer files, create them in Documents/buffers
 import os 
 import shutil
@@ -24,9 +19,9 @@ if platform.system() == 'Windows':
     # Load the path from file if there is a path.txt in the buffer folder
     path_txt = os.path.join(buffer_path, 'path.txt')
     
-    command_buffer = os.path.join(_buffer_path, 'ToIgor.arcmd')
-    read_out_buffer = os.path.join(_buffer_path, 'readout.txt')
-    bash_buffer = os.path.join(_buffer_path, 'SendToIgor.bat')
+    command_buffer = os.path.join(buffer_path, 'ToIgor.arcmd')
+    read_out_buffer = os.path.join(buffer_path, 'readout.txt')
+    bash_buffer = os.path.join(buffer_path, 'SendToIgor.bat')
     
     try:
         # Create the buffer folder
@@ -45,7 +40,7 @@ if platform.system() == 'Windows':
             
             # Write the exe_path into the bash buffer
             with open(bash_buffer, 'w') as fopen:
-                fopen.write('"{}" "{}"'.format(exe_path, bash_buffer))
+                fopen.write('"{}" "{}"'.format(exe_path, command_buffer))
         else:
             # Fist-time installation: no path_txt file available
             # Detect the AR version and installation path automatically
@@ -70,10 +65,15 @@ if platform.system() == 'Windows':
                 fopen.write(exe_path)
                 
             with open(bash_buffer, 'w') as fopen: 
-                fopen.write('"{}" "{}"'.format(exe_path, bash_buffer))
+                fopen.write('"{}" "{}"'.format(exe_path, command_buffer))
 
             # Copy the user functions into the default include folder of AR
             # shutil.copy(os.path.join(aespm.__path__, 'user functions', 'UserFunctions.ipf'), os.path.join(doc_path, 'AsylumResearch', 'UserIncludes'))
 
     except PermissionError:
         print('No writing permission to ~/Documents. Please create buffer folder and files manually.')
+        
+from aespm.experiment import *
+
+from aespm import tools
+from aespm import utils
