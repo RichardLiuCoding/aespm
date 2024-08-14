@@ -15,6 +15,22 @@ For AR SPM users, download the "UserFunctions.ipf" from [**aespm/user functions*
 
 ps, if you software is already running, you need to click "Programming -> Rescan User Includes" to make this change effective.
 
+### 1-1-1. Manual Setup of "exe_path"
+
+If your AR/Igor software is not installed in the default path, you need to take the following actions:
+
+1. Install the aespm library as usual.
+2. Run the library once (by running ```import aespm``` in a terminal or jupyter notebook).
+3. Navigate to "Documents-->buffer-->path.txt".
+4. Edit the "path.txt" file and paste the path to your "Igor.exe" here.
+5. Then it should work now!
+
+### 1-1-2. Manual Setup of AR versions before **v16**
+
+If you're using an AR software equal or older than v16, you need to follow the instructions in this file.
+
+If you're using Windows 7, you need to disable the remote control with the following instructions.
+
 ## 1-2. Detailed instruction on installation + Video
 
 [![Watch the video](https://img.youtube.com/vi/DFy6PRU4aiQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=DFy6PRU4aiQ)
