@@ -75,5 +75,5 @@ if platform.system() == 'Windows':
             # Copy the user functions into the default include folder of AR
             # shutil.copy(os.path.join(aespm.__path__, 'user functions', 'UserFunctions.ipf'), os.path.join(doc_path, 'AsylumResearch', 'UserIncludes'))
 
-	except PermissionError:
-		print('No writing permission to ~/Documents. Please create buffer folder and files manually.')
+    except PermissionError:
+        print('No writing permission to ~/Documents. Please create buffer folder and files manually.')
