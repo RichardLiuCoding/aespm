@@ -158,20 +158,13 @@ class IBWData(object):
         # Output array length
         length = len(index_bp) // 2
 
-        bias_on = np.zeros(length)
-        bias_off = np.zeros(length)
+        bias_on, bias_off = np.zeros(length), np.zeros(length)
 
-        phase1_on = np.zeros(length)
-        phase1_off = np.zeros(length)
+        phase1_on,phase1_off = np.zeros(length), np.zeros(length)
+        phase2_on, phase2_off  = np.zeros(length), np.zeros(length)
+        amp_on, amp_off = np.zeros(length), np.zeros(length)
+        freq_on, freq_off = np.zeros(length), np.zeros(length)
 
-        phase2_on = np.zeros(length)
-        phase2_off = np.zeros(length)
-
-        amp_on = np.zeros(length)
-        amp_off = np.zeros(length)
-
-        freq_on = np.zeros(length)
-        freq_off = np.zeros(length)
 
         for i in range(length * 2-1):
             if i % 2 == 0: # bias off
@@ -193,12 +186,17 @@ class IBWData(object):
         self.phase2_off = phase2_off[1:]
         self.freq_on = freq_on[1:]
         self.freq_off = freq_off[1:]
-        self.amp_on = amp_on[1:] * np.cos(phase1_on[1:]/180*np.pi)
-        self.amp_off = amp_off[1:] * np.cos(phase1_off[1:]/180*np.pi)
+        self.amp_on = amp_on[1:]
+        self.amp_off = amp_off[1:]
+
+        self.x_on = amp_on[1:] * np.cos(phase1_on[1:]/180*np.pi)
+        self.x_off = amp_off[1:] * np.cos(phase1_off[1:] / 180 * np.pi)
+        self.y_on = amp_on[1:] * np.sin(phase1_on[1:] / 180 * np.pi)
+        self.y_off = amp_off[1:] * np.sin(phase1_off[1:] /180 * np.pi)
 
         # return bias[1:], amp_off[1:], phase1_off[1:], phase2_off[1:]
 
-    def _correct_phase_wrapping(self, ph, lower=-90, upper=270):
+    def _correct_phase_wrapping(self, ph, lower=-90, upper=270, offset_correction=True):
         '''
         Correct the phase wrapping in Jupiter.
         
@@ -210,7 +208,10 @@ class IBWData(object):
             ph_shift - Array: phase with wrapping corrected
         '''
         # Use the phase value measured at last pixel as the offset in the lock-in
-        ph_shift = ph - ph[-1]
+        if offset_correction:
+            ph_shift = ph - ph[-1]
+        else:
+            ph_shift = ph
 
         index_upper = np.where(ph_shift > upper)
         index_lower = np.where(ph_shift < lower)
