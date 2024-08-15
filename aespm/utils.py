@@ -1,4 +1,4 @@
-import paramiko
+#import paramiko
 import Pyro5.api
 import subprocess
 import os
@@ -13,10 +13,19 @@ if platform.system() == 'Windows':
     read_out_buffer = os.path.join(buffer_path, 'readout.txt')
     bash_buffer = os.path.join(buffer_path, 'SendToIgor.bat')
     
+
     path_txt = os.path.join(buffer_path, 'path.txt')
     
     with open(path_txt, 'r') as fopen:
         exe_path = fopen.readline()
+
+#     if os.path.exists("C:\\AsylumResearch\\v19"):
+#         exe_path = "C:\\AsylumResearch\\v19\\RealTime\\Igor Pro Folder\\Igor.exe"
+#     elif os.path.exists("C:\\AsylumResearch\\v18"):
+#         exe_path = "C:\\AsylumResearch\\v18\\RealTime\\Igor Pro Folder\\Igor.exe"
+#     else:
+#         exe_path = "C:\\Asylum\\Igor Pro Folder AR15\\Igor.exe"
+
 
 class SharedInfo:
     '''
@@ -142,21 +151,21 @@ def main_exe_on_server(host=shared._host):
     # args = aespm._command_buffer
     execute_exe_on_server(exe_path, args=shared._command_buffer, host=host)
 
-def return_connection(host: str, username: str, password: str):
-    """
-    Return a connection object to the remote server.
-    Args:
-        host (str): IP address of the remote server.
-        username (str): Username for the remote server.
-        password (str): Password for the remote server.
-    Returns:
-        connection (object): Connection object to the remote server.
-    """
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(host, username=username, password=password)
-    connection = client.open_sftp()
-    return connection, client
+# def return_connection(host: str, username: str, password: str):
+#     """
+#     Return a connection object to the remote server.
+#     Args:
+#         host (str): IP address of the remote server.
+#         username (str): Username for the remote server.
+#         password (str): Password for the remote server.
+#     Returns:
+#         connection (object): Connection object to the remote server.
+#     """
+#     client = paramiko.SSHClient()
+#     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+#     client.connect(host, username=username, password=password)
+#     connection = client.open_sftp()
+#     return connection, client
 
 def read_remote_file(connection: object, file_path: str):
     """
