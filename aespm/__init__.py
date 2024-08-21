@@ -59,6 +59,7 @@ if platform.system() == 'Windows':
             elif os.path.exists("C:\\AsylumResearch\\v13"):
                 exe_path = "C:\\AsylumResearch\\v13\\RealTime\\Igor Pro Folder\\Igor.exe"
             else:
+                exe_path = " "
                 print("No AR detected. Please modify path.txt manually to include the AR path.")
         
             with open(path_txt, 'w') as fopen:
