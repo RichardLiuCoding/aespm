@@ -132,7 +132,7 @@ class IBWData(object):
         # Load the channel names
         self.channels = [self.header.get(f'Channel{i+1}DataType', 'Unknown') for i in range(np.shape(self.data)[0])]
 
-    def _load_ss(self, nan=True):
+    def _load_ss(self, nan=True, drop=0.1):
 
         if nan is True:
             bias_raw= self.data[-1]
@@ -162,7 +162,10 @@ class IBWData(object):
 
         # Let's count how many times the bias has changed (on->off, off->on)
         index_bp = np.where(np.diff(bias) != 0)[0] + 1
-        index_bp = np.concatenate([[0], index_bp])
+        # We define the width of applied voltage by the first non-zero voltage plateau
+        index_delta = index_bp[1] - index_bp[0]
+        # We drop the first segment of zero bias signals as this is the initial settling time
+        index_bp = np.concatenate([[index_bp[0]-index_delta], index_bp])
 
         # Output array length
         length = len(index_bp) // 2
@@ -178,49 +181,54 @@ class IBWData(object):
         phase_dr_on, phase_dr_off = np.zeros(length), np.zeros(length)
         q_on, q_off = np.zeros(length), np.zeros(length)
 
+        # We drop the first and last 10% data to avoid oscillation after bias change (10% settling time)
+        skip = int(drop * index_delta)
+        
         for i in range(length * 2-1):
+            start = index_bp[i] + skip
+            end = index_bp[i+1] - skip
             if i % 2 == 0: # bias off
-                phase1_off[i//2] = np.mean(phase1[index_bp[i]:index_bp[i+1]])
-                phase2_off[i//2] = np.mean(phase2[index_bp[i]:index_bp[i+1]])
-                amp_off[i//2] = np.mean(amp[index_bp[i]:index_bp[i+1]])
-                freq_off[i//2] = np.mean(freq[index_bp[i]:index_bp[i+1]])
-                bias_off[i//2] = np.mean(bias[index_bp[i]:index_bp[i+1]])
+                phase1_off[i//2] = np.mean(phase1[start:end])
+                phase2_off[i//2] = np.mean(phase2[start:end])
+                amp_off[i//2] = np.mean(amp[start:end])
+                freq_off[i//2] = np.mean(freq[start:end])
+                bias_off[i//2] = np.mean(bias[start:end])
 
-                phase_dr_off[i // 2] = np.mean(ph_dr[index_bp[i]:index_bp[i + 1]])
-                q_off[i // 2] = np.mean(q[index_bp[i]:index_bp[i + 1]])
-                amp_dr_off[i // 2] = np.mean(a_dr[index_bp[i]:index_bp[i + 1]])
+                phase_dr_off[i // 2] = np.mean(ph_dr[start:end])
+                q_off[i // 2] = np.mean(q[start:end])
+                amp_dr_off[i // 2] = np.mean(a_dr[start:end])
 
             else:
-                bias_on[i//2] = np.mean(bias[index_bp[i]:index_bp[i+1]])
-                phase1_on[i//2] = np.mean(phase1[index_bp[i]:index_bp[i+1]])
-                phase2_on[i//2] = np.mean(phase2[index_bp[i]:index_bp[i+1]])
-                amp_on[i//2] = np.mean(amp[index_bp[i]:index_bp[i+1]])
-                freq_on[i//2] = np.mean(freq[index_bp[i]:index_bp[i+1]])
+                bias_on[i//2] = np.mean(bias[start:end])
+                phase1_on[i//2] = np.mean(phase1[start:end])
+                phase2_on[i//2] = np.mean(phase2[start:end])
+                amp_on[i//2] = np.mean(amp[start:end])
+                freq_on[i//2] = np.mean(freq[start:end])
 
-                phase_dr_on[i // 2] = np.mean(ph_dr[index_bp[i]:index_bp[i + 1]])
-                q_on[i // 2] = np.mean(q[index_bp[i]:index_bp[i + 1]])
-                amp_dr_on[i // 2] = np.mean(a_dr[index_bp[i]:index_bp[i + 1]])
+                phase_dr_on[i // 2] = np.mean(ph_dr[start:end])
+                q_on[i // 2] = np.mean(q[start:end])
+                amp_dr_on[i // 2] = np.mean(a_dr[start:end])
 
-        self.bias = bias_on[1:]
-        self.phase1_on = phase1_on[1:]
-        self.phase1_off = phase1_off[1:]
-        self.phase2_on = phase2_on[1:]
-        self.phase2_off = phase2_off[1:]
-        self.freq_on = freq_on[1:]
-        self.freq_off = freq_off[1:]
-        self.amp_on = amp_on[1:]
-        self.amp_off = amp_off[1:]
-        self.x_on = amp_on[1:] * np.cos(phase1_on[1:]/180*np.pi)
-        self.x_off = amp_off[1:] * np.cos(phase1_off[1:] / 180 * np.pi)
+        self.bias = bias_on
+        self.phase1_on = phase1_on
+        self.phase1_off = phase1_off
+        self.phase2_on = phase2_on
+        self.phase2_off = phase2_off
+        self.freq_on = freq_on
+        self.freq_off = freq_off
+        self.amp_on = amp_on
+        self.amp_off = amp_off
+        self.x_on = amp_on * np.cos(phase1_on/180*np.pi)
+        self.x_off = amp_off * np.cos(phase1_off / 180 * np.pi)
 
-        self.amp_dr_on = amp_dr_on[1:]
-        self.amp_dr_off = amp_dr_off[1:]
-        self.x_dr_on = amp_dr_on[1:] * np.cos(phase_dr_on[1:] / 180 * np.pi)
-        self.x_dr_off = amp_dr_off[1:] * np.cos(phase_dr_off[1:] / 180 * np.pi)
-        self.phase_dr_on = phase_dr_on[1:]
-        self.phase_dr_off = phase_dr_off[1:]
-        self.q_on = q_on[1:]
-        self.q_off = q_off[1:]
+        self.amp_dr_on = amp_dr_on
+        self.amp_dr_off = amp_dr_off
+        self.x_dr_on = amp_dr_on * np.cos(phase_dr_on / 180 * np.pi)
+        self.x_dr_off = amp_dr_off * np.cos(phase_dr_off / 180 * np.pi)
+        self.phase_dr_on = phase_dr_on
+        self.phase_dr_off = phase_dr_off
+        self.q_on = q_on
+        self.q_off = q_off
 
         # return bias[1:], amp_off[1:], phase1_off[1:], phase2_off[1:]
 
