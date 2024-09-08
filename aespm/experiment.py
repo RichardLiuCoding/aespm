@@ -475,7 +475,10 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ['ZeroPD', 'PDZero'],
         ['DARTTrigger', 'SSTrigger'],
         ['DARTAmp', 'DART v_ac'],
-        ['SampleHeight', 'Sample Height'],
+        ['SampleHeight', 'Sample Height'], # 54
+        ['DARTIGain', 'DART i_gain', 'DART_I_Gain', 'DART I Gain'],
+        ['Arg4', 'ARG 4', 'arg4', 'ARG4'],
+        ['SamplingFreq', 'Sampling Freq'],
         
     ]
 
@@ -534,7 +537,11 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ["ZeroLDPDButton_1","MasterMotorPanel",0], 
         ["TriggerPointSetVar_2","DARTSpectroscopy", 1],
         ["DriveAmplitudeSetVar_3", "DART", 1], 
-        ['PV("SampleHeight", {})'.format(value), 4],
+        ['PV("SampleHeight", {})'.format(value), 4], # 54
+        ["DARTIGainSetVar_0", "DART", 1], 
+        ["ARDoIVArg3SetVar_1","DARTSpectroscopy", 1],
+        ["NumPtsPerSecSetVar_2","DARTSpectroscopy", 1],
+        
     ]
     # Construct the action dict
     for i, key in enumerate(key_list):
