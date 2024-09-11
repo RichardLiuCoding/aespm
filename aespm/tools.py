@@ -967,9 +967,9 @@ def get_imgstack(imgdata: np.ndarray,
 
 def extract_subimages(imgdata: np.ndarray,
                       coordinates: Union[Dict[int, np.ndarray], np.ndarray],
-                      window_size: int, coord_class: int = 0) -> Tuple[np.ndarray]:
+                      window_size: int, coord_class: int = 0):
 
-     """
+    """
     Extracts subimages centered at certain atom class/type
     (usually from a neural network output) (Adapted from atomai).
 
