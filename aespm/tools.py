@@ -7,6 +7,10 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import os
 from igor2 import binarywave as bw
 
+from scipy.interpolate import interp1d
+import scipy.optimize as opt
+import scipy.ndimage as snd
+from scipy.signal import butter, filtfilt, fftconvolve, hilbert, correlate, windows
 
 def load_ibw(file, ss=False):
     '''
@@ -706,3 +710,181 @@ def fft(dataIn, window='None', output='absolute', zeroDC=False, beta=1.0,
                 print('WARNING: The window function "%s" messes up the FT units' %
                         window)
     return ftData
+
+def ifft(data, output='real', envelope=False):
+    '''
+    Compute the inverse Fourier transform with the option to detect envelope.
+
+    Inputs:
+        data    - Required : A 1D or 2D numpy array. (3D not yet supported)
+        output  - Optional : String containing desired form of output.  The
+                             options are: 'absolute', 'real', 'imag', 'phase'
+                             or 'complex'.
+        envelope - Optional : Boolen, when True applies the Hilbert transform
+                              to detect the envelope of the IFT, which is the
+                              absolute values.
+        **kwarg - Optional : Passed to scipy.signal.hilbert()
+
+    See docs.scipy.org/doc/scipy/reference/generated/scipy.signal.hilbert.html
+    for more information about envelope function.
+
+    Outputs:
+        ift - A numpy array containing inverse Fourier transform.
+
+    History:
+        Adapted from stmpy
+    '''
+    outputFunctions = {'absolute':np.absolute, 'real':np.real,
+                       'imag':np.imag, 'phase':np.angle, 'complex':(lambda x:x)}
+    out = outputFunctions[output]
+    if len(data.shape) == 2:
+        ift = np.fft.ifft2(np.fft.ifftshift(data))
+    elif len(data.shape) == 1:
+        ift = np.fft.ifft(np.fft.ifftshift(data))
+    if envelope:
+        ift = hilbert(np.real(ift))
+    return out(ift)
+
+
+def fftfreq(px, nm):
+    '''Get frequnecy bins for Fourier transform.'''
+    freqs = np.fft.fftfreq(px, float(nm)/(px))
+    return np.fft.fftshift(freqs)
+    
+def interp2d(x, y, z, kind='nearest', **kwargs):
+    '''
+    An extension for scipy.interpolate.interp2d() which adds a 'nearest'
+    neighbor interpolation.
+
+    See help(scipy.interpolate.interp2d) for details.
+
+    Inputs:
+        x       - Required : Array contining x values for data points.
+        y       - Required : Array contining y values for data points.
+        z       - Required : Array contining z values for data points.
+        kind    - Optional : Sting for interpolation scheme. Options are:
+                             'nearest', 'linear', 'cubic', 'quintic'.  Note
+                             that 'linear', 'cubic', 'quintic' use spline.
+        **kwargs - Optional : Keyword arguments passed to
+                              scipy.interpolate.interp2d
+
+    Returns:
+        f(x,y) - Callable function which will return interpolated values.
+
+    History:
+        Adapted from stmpy.
+    '''
+    from scipy.interpolate import NearestNDInterpolator
+    if kind is 'nearest':
+        X, Y = np.meshgrid(x ,y)
+        points = np.array([X.flatten(), Y.flatten()]).T
+        values = z.flatten()
+        fActual = NearestNDInterpolator(points, values)
+        def fCall(x, y):
+            if type(x) is not np.ndarray:
+                lx = 1
+            else:
+                lx = x.shape[0]
+            if type(y) is not np.ndarray:
+                ly = 1
+            else:
+                ly = y.shape[0]
+            X, Y = np.meshgrid(x ,y)
+            points = np.array([X.flatten(), Y.flatten()]).T
+            values = fActual(points)
+            return values.reshape(lx, ly)
+        return fCall
+    else:
+        from scipy.interpolate import interp2d as scinterp2d
+        return scinterp2d(x, y, z, kind=kind, **kwargs)
+    
+def linecut(data, p0, p1, width=1, dl=1, dw=1, kind='linear',
+                show=False, ax=None, **kwarg):
+    '''Linecut tool for 2D or 3D data.
+
+    Inputs:
+        data    - Required : A 2D or 3D numpy array.
+        p0      - Required : A tuple containing indicies for the start of the
+                             linecut: p0=(x0,y0)
+        p1      - Required : A tuple containing indicies for the end of the
+                             linecut: p1=(x1,y1)
+        width   - Optional : Float for perpendicular width to average over.
+        dl      - Optional : Extra pixels for interpolation in the linecut
+                             direction.
+        dw      - Optional : Extra pixels for interpolation in the
+                             perpendicular direction.
+        kind    - Optional : Sting for interpolation scheme. Options are:
+                             'nearest', 'linear', 'cubic', 'quintic'.  Note
+                             that 'linear', 'cubic', 'quintic' use spline.
+        show    - Optional : Boolean determining whether to plot where the
+                             linecut was taken.
+        ax      - Optional : Matplotlib axes instance to plot where linecut is
+                             taken.  Note, if show=True you MUST provide and
+                             axes instance as plotting is done using ax.plot().
+        **kwarg - Optional : Additional keyword arguments passed to ax.plot().
+
+    Returns:
+        r   -   1D numpy array which goes from 0 to the length of the cut.
+        cut -   1D or 2D numpy array containg the linecut.
+
+    Usage:
+        r, cut = linecut(data, (x0,y0), (x1,y1), width=1, dl=0, dw=0,
+                         show=False, ax=None, **kwarg)
+
+    History:
+        Adapted from stmpy.
+    '''
+    def calc_length(p0, p1, dl):
+        dx = float(p1[0]-p0[0])
+        dy = float(p1[1]-p0[1])
+        l = np.sqrt(dy**2 + dx**2)
+        if dx == 0:
+            theta = np.pi/2
+        else:
+            theta = np.arctan(dy / dx)
+        xtot = np.linspace(p0[0], p1[0], int(np.ceil(l+dl)))
+        ytot = np.linspace(p0[1], p1[1], int(np.ceil(l+dl)))
+        return l, theta, xtot, ytot
+
+    def get_perp_line(x, y, theta, w):
+        wx0 = x - w/2.0*np.cos(np.pi/2 - theta)
+        wx1 = x + w/2.0*np.cos(np.pi/2 - theta)
+        wy0 = y + w/2.0*np.sin(np.pi/2 - theta)
+        wy1 = y - w/2.0*np.sin(np.pi/2 - theta)
+        return (wx0, wx1), (wy0, wy1)
+
+    def cutter(F, p0, p1, dw):
+        l, __, xtot, ytot = calc_length(p0, p1, dw)
+        cut = np.zeros(int(np.ceil(l+dw)))
+        for ix, (x,y) in enumerate(zip(xtot, ytot)):
+            cut[ix] = F(x,y)
+        return cut
+
+    def linecut2D(layer, p0, p1, width, dl, dw):
+        xAll, yAll = np.arange(layer.shape[1]), np.arange(layer.shape[0])
+        F = interp2d(xAll, yAll, layer, kind=kind)
+        l, theta, xtot, ytot = calc_length(p0, p1, dl)
+        r = np.linspace(0, l, int(np.ceil(l+dl)))
+        cut = np.zeros(int(np.ceil(l+dl)))
+        for ix, (x,y) in enumerate(zip(xtot,ytot)):
+            (wx0, wx1), (wy0, wy1) = get_perp_line(x, y, theta, width)
+            wcut = cutter(F, (wx0,wy0), (wx1,wy1), dw)
+            cut[ix] = np.mean(wcut)
+        return r, cut
+
+    if len(data.shape) == 2:
+        r, cut = linecut2D(data, p0, p1, width, dl, dw)
+    if len(data.shape) == 3:
+        l, __, __, __ = calc_length(p0, p1, dl)
+        cut = np.zeros([data.shape[0], int(np.ceil(l+dl))])
+        for ix, layer in enumerate(data):
+            r, cut[ix] = linecut2D(layer, p0, p1, width, dl, dw)
+    if show:
+        __, theta, __, __ = calc_length(p0, p1, dl)
+        (wx00, wx01), (wy00, wy01) = get_perp_line(p0[0], p0[1], theta, width)
+        (wx10, wx11), (wy10, wy11) = get_perp_line(p1[0], p1[1], theta, width)
+        ax.plot([p0[0],p1[0]], [p0[1],p1[1]], 'k--', **kwarg)
+        ax.plot([wx00,wx01], [wy00,wy01], 'k:', **kwarg)
+        ax.plot([wx10,wx11], [wy10,wy11], 'k:', **kwarg)
+    return r, cut
+    
