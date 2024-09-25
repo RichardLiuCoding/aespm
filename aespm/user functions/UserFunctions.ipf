@@ -54,14 +54,16 @@ End //GetTune
 
 Function ChangeName(NewName)
     String NewName
-    Struct WMSetvariableAction ButtonStruct
-    ButtonStruct.EventCode = 2
-    ButtonStruct.Win = "MasterPanel"
-    ButtonStruct.CtrlName = "BaseNameSetVar_0"
-    ButtonStruct.SVal = NewName
-    ButtonStruct.DVal = 0
-    BaseNameSetVarFunc(ButtonStruct)
+//    Struct WMSetvariableAction ButtonStruct
+//    ButtonStruct.EventCode = 2
+//    ButtonStruct.Win = "MasterPanel"
+//    ButtonStruct.CtrlName = "BaseNameSetVar_0"
+//    ButtonStruct.SVal = NewName
+//    ButtonStruct.DVal = 0
+//    BaseNameSetVarFunc(ButtonStruct)
+      BaseNameSetVarFunc("BaseNameSetVar_0",Nan,NewName,"BaseName")
 End //
+
 
 
 Function MoveStage(Direction)
@@ -274,3 +276,4 @@ Function/S RampBackpackItems(AddressList,DestPositions,RampTime,Event,[Callback]
             	endif
             	Return ErrorStr
 End //RampBackpackItems
+
