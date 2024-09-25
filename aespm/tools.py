@@ -999,8 +999,7 @@ def extract_subimages(imgdata: np.ndarray,
         - frame number associated with each subimage
     """
     if isinstance(coordinates, np.ndarray):
-        coordinates = np.concatenate((
-            coordinates, np.zeros((coordinates.shape[0], 1))), axis=-1)
+        coordinates = np.concatenate((coordinates, np.zeros((coordinates.shape[0], 1))), axis=-1)
         coordinates = {0: coordinates}
     if np.ndim(imgdata) == 2:
         imgdata = imgdata[None, ..., None]
