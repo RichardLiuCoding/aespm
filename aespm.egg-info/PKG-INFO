@@ -1,11 +1,10 @@
 Metadata-Version: 2.1
 Name: aespm
-Version: 1.0.5
+Version: 1.1.3
 Summary: SPM Automation with Python and Machine Learning.
 Home-page: https://github.com/RichardLiuCoding/aespm
 Download-URL: https://github.com/RichardLiuCoding/aespm.git
-Author: Richard (Yu) Liu
-Author-email: yliu206@utk.edu
+Author: ['Richard (Yu) Liu']
 License: MIT
 Keywords: SPM,Python,Instrument control,Autonomoous,Machine learning,Data Analysis
 Classifier: Development Status :: 3 - Alpha

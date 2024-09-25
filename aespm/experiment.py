@@ -477,7 +477,19 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ['ZeroPD', 'PDZero'],
         ['DARTTrigger', 'SSTrigger'],
         ['DARTAmp', 'DART v_ac'],
-        ['SampleHeight', 'Sample Height'],
+        ['SampleHeight', 'Sample Height'], # 54
+        ['DARTIGain', 'DART i_gain', 'DART_I_Gain', 'DART I Gain'],
+        ['Arg4', 'ARG 4', 'arg4', 'ARG4'],
+        ['SamplingFreq', 'Sampling Freq'],
+        # KPFM related
+        ['Trigger Point', 'TriggerPoint', 'ElectricalTuneTrigger'],
+        ['NapTipVoltage', 'TipVoltageNap'], # 59
+        ['Potential I Gain', 'PotentialIGain', 'ElectricalIGain', 'Electrical I Gain'],
+        ['Potential P Gain', 'PotentialPGain', 'ElectricalPGain', 'Electrical P Gain'],
+        ['ElectricalTune', 'ElectricalTuneOnce'],
+        ['ElectricalTuneCenter', 'ElectricalTuneCenterPhase'],
+        ['SingleForce', 'ElectricalSingleForce', 'NapSingleForce'], # 64
+        ['GetForce'],
         
     ]
 
@@ -536,7 +548,20 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ["ZeroLDPDButton_1","MasterMotorPanel",0], 
         ["TriggerPointSetVar_2","DARTSpectroscopy", 1],
         ["DriveAmplitudeSetVar_3", "DART", 1], 
-        ['PV("SampleHeight", {})'.format(value), 4],
+        ['PV("SampleHeight", {})'.format(value), 4], # 54
+        ["DARTIGainSetVar_0", "DART", 1], 
+        ["ARDoIVArg3SetVar_1","DARTSpectroscopy", 1],
+        ["NumPtsPerSecSetVar_2","DARTSpectroscopy", 1],
+        # KPFM related
+        ["TriggerPointSetVar_0","ElectricPanel", 1],
+        ["NapTipVoltageSetVar_0","ElectricPanel", 1], # 59
+        ["PotentialIGainSetVar_0","ElectricPanel", 1],
+        ["PotentialPGainSetVar_0","ElectricPanel", 1],
+        ["DoTuneElectric_0","ElectricPanel", 0],
+        ["DoTuneCent_0","ElectricPanel", 0],
+        ["SingleForce_0","ElectricPanel", 0], # 64
+        ['GetForce()', 4],
+        
     ]
     # Construct the action dict
     for i, key in enumerate(key_list):
@@ -633,7 +658,7 @@ def move_stage(distance, connection=None):
         write_spm(commands='MoveStage("{}")'.format(y_direction), connection=connection)
 
 
-def tune_probe(num=1, path=os.path.join(_buffer_path, 'Tune.ibw'), center=None, width=50e3, out=False, connection=None):
+def tune_probe(num=1, path=os.path.join(_buffer_path, 'Tune.ibw'), center=None, width=50e3, out=False, readonly=False, connection=None):
     '''
     Tune the probe in the DART mode and optionally read the tune data.
 
@@ -643,35 +668,45 @@ def tune_probe(num=1, path=os.path.join(_buffer_path, 'Tune.ibw'), center=None, 
         center  - float: center of the tuning frequency range
         width   - float: frequency range of runing
         out     - Boolean: flag to indicate if tune data will be output
+        readonly- Boolean: flag to indicate if tune will be read only or after retune
     Output:
         tune    - an AR wave containing frequency and amplitude
     Example:
         w = ae.tune_probe(num=2, out=True)
     '''
-    for i in range(num):
-        spm_control('OneTuneDART', wait=1, connection=connection)
+    if readonly is False:
+        for i in range(num):
+            spm_control('OneTuneDART', wait=1, connection=connection)
+            spm_control('GetTune', wait=0.5, connection=connection)
+            if connection is not None:
+                aespm.utils.download_file(connection=connection, file_path=path, local_file_name='tune.ibw')
+                w = ibw_read('tune.ibw').data
+            else:
+                w = ibw_read(path).data
+            freq = w[0][w[1].argmax()]
+            if center is not None:
+                if abs(freq-center) > width:
+                    freq = center
+            spm_control('DARTFreq', value=freq, connection=connection)
         spm_control('GetTune', wait=0.5, connection=connection)
         if connection is not None:
             aespm.utils.download_file(connection=connection, file_path=path, local_file_name='tune.ibw')
             w = ibw_read('tune.ibw').data
         else:
             w = ibw_read(path).data
+        # Get the freq corresponds to the max intensity
         freq = w[0][w[1].argmax()]
-        if center is not None:
-            if abs(freq-center) > width:
-                freq = center
+        # Set this freq to be the driven freq
         spm_control('DARTFreq', value=freq, connection=connection)
-    spm_control('GetTune', wait=0.5, connection=connection)
-    if connection is not None:
-        aespm.utils.download_file(connection=connection, file_path=path, local_file_name='tune.ibw')
-        w = ibw_read('tune.ibw').data
+        spm_control('CenterPhase', connection=connection)
     else:
-        w = ibw_read(path).data
-    # Get the freq corresponds to the max intensity
-    freq = w[0][w[1].argmax()]
-    # Set this freq to be the driven freq
-    spm_control('DARTFreq', value=freq, connection=connection)
-    spm_control('CenterPhase', connection=connection)
+        spm_control('GetTune', wait=0.5, connection=connection)
+        if connection is not None:
+            aespm.utils.download_file(connection=connection, file_path=path, local_file_name='tune.ibw')
+            w = ibw_read('tune.ibw').data
+        else:
+            w = ibw_read(path).data
+            
     if out == True:
         return w
 
