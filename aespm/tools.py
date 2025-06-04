@@ -143,11 +143,12 @@ class IBWData(object):
             index_not_nan = np.where(~np.isnan(bias_raw))
 
             bias = bias_raw[index_not_nan]
-            amp, phase1, phase2, freq = self.data[2][index_not_nan], self.data[3][index_not_nan], \
+            amp1, amp2, phase1, phase2, freq = self.data[1][index_not_nan], self.data[2][index_not_nan], self.data[3][index_not_nan], \
                         self.data[4][index_not_nan], self.data[5][index_not_nan]
         else:
             bias = self.data[-1]
-            amp = self.data[2]
+            amp1 = self.data[1]
+            amp2 = self.data[2]
             phase1 = self.data[3]
             phase2 = self.data[4]
             freq = self.data[5]
@@ -158,7 +159,7 @@ class IBWData(object):
 
         df = self.header['DFRTFrequencyWidth']
 
-        a_dr, ph_dr, q = self._calc_drive_params(amp, amp, phase1/180*np.pi, phase2/180*np.pi, freq, df)
+        a_dr, ph_dr, q = self._calc_drive_params(amp1, amp2, phase1/180*np.pi, phase2/180*np.pi, freq, df)
 
         phase1 = self._correct_phase_wrapping(phase1)
         phase2 = self._correct_phase_wrapping(phase2)
@@ -179,6 +180,8 @@ class IBWData(object):
         phase1_on,phase1_off = np.zeros(length), np.zeros(length)
         phase2_on, phase2_off  = np.zeros(length), np.zeros(length)
         amp_on, amp_off = np.zeros(length), np.zeros(length)
+        amp1_on, amp1_off = np.zeros(length), np.zeros(length)
+        amp2_on, amp2_off = np.zeros(length), np.zeros(length)
         freq_on, freq_off = np.zeros(length), np.zeros(length)
 
         amp_dr_on, amp_dr_off = np.zeros(length), np.zeros(length)
@@ -194,7 +197,8 @@ class IBWData(object):
             if i % 2 == 0: # bias off
                 phase1_off[i//2] = np.mean(phase1[start:end])
                 phase2_off[i//2] = np.mean(phase2[start:end])
-                amp_off[i//2] = np.mean(amp[start:end])
+                amp1_off[i//2] = np.mean(amp1[start:end])
+                amp2_off[i//2] = np.mean(amp2[start:end])
                 freq_off[i//2] = np.mean(freq[start:end])
                 bias_off[i//2] = np.mean(bias[start:end])
 
@@ -206,7 +210,8 @@ class IBWData(object):
                 bias_on[i//2] = np.mean(bias[start:end])
                 phase1_on[i//2] = np.mean(phase1[start:end])
                 phase2_on[i//2] = np.mean(phase2[start:end])
-                amp_on[i//2] = np.mean(amp[start:end])
+                amp1_on[i//2] = np.mean(amp1[start:end])
+                amp2_on[i//2] = np.mean(amp2[start:end])
                 freq_on[i//2] = np.mean(freq[start:end])
 
                 phase_dr_on[i // 2] = np.mean(ph_dr[start:end])
@@ -220,8 +225,12 @@ class IBWData(object):
         self.phase2_off = phase2_off
         self.freq_on = freq_on
         self.freq_off = freq_off
-        self.amp_on = amp_on
-        self.amp_off = amp_off
+        self.amp_on = amp1_on
+        self.amp_off = amp1_off
+        self.amp1_on = amp1_on
+        self.amp1_off = amp1_off
+        self.amp2_on = amp2_on
+        self.amp2_off = amp2_off
         self.x_on = amp_on * np.cos(phase1_on/180*np.pi)
         self.x_off = amp_off * np.cos(phase1_off / 180 * np.pi)
 
