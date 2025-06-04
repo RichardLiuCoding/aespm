@@ -475,7 +475,10 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ['ZeroPD', 'PDZero'],
         ['DARTTrigger', 'SSTrigger'],
         ['DARTAmp', 'DART v_ac'],
-        ['SampleHeight', 'Sample Height'],
+        ['SampleHeight', 'Sample Height'], #54
+        ['SingleTune', 'TuneOnce', 'ACTune'],
+        ['SinglePhase', 'PhaseOnce', 'ACPhase'],
+        ['ChangeFunction', 'DARTFunction', 'IVFunction'],
         
     ]
 
@@ -493,7 +496,7 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ['GoForce_1', 'MasterPanel', 0],
         ['TipVoltageSetVar_0', 'NapPanel', 1],
         ['SurfaceVoltageSetVar_0', 'NapPanel', 1],
-        ['SingleForce_1', 'MasterPanel', 0],
+        ['SingleForce()', 4],
         ["EnableStageCB_0","MasterMotorPanel", 1, 5], # 14
         ["MotorEngageButton_0","MasterMotorPanel",0], 
         ["EnableStageCB_0","MasterMotorPanel", 0, 5],
@@ -534,7 +537,10 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ["ZeroLDPDButton_1","MasterMotorPanel",0], 
         ["TriggerPointSetVar_2","DARTSpectroscopy", 1],
         ["DriveAmplitudeSetVar_3", "DART", 1], 
-        ['PV("SampleHeight", {})'.format(value), 4],
+        ['PV("SampleHeight", {})'.format(value), 4], #54
+        ['SingleTune()', 4],
+        ['SinglePhase()', 4],
+        ['ARDoIVPopFunc("ARDoIVFuncPop_1",{},"ARDoIVFuncPop_1")'.format(value), 4],
     ]
     # Construct the action dict
     for i, key in enumerate(key_list):
