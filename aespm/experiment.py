@@ -490,6 +490,7 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ['GetForce'],
         ['ZeroPhase', 'SinglePhase', 'SinglePhase90'],
         ['ChangeFunction', 'DARTFunction', 'IVFunction'],
+
     ]
 
     value_list = [
@@ -563,6 +564,7 @@ def spm_control(action, value=None, wait=0.35, connection=None):
         ['GetForce()', 4],
         ['SinglePhase()', 4],
         ['ARDoIVPopFunc("ARDoIVFuncPop_1",{},"ARDoIVFuncPop_1")'.format(value), 4],
+
         
     ]
     # Construct the action dict
