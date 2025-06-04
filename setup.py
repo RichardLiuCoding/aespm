@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
   name = 'aespm',
-  version = '1.1.3',
+  version = '1.1.4',
   packages = find_packages(),
   license='MIT',
   description = 'SPM Automation with Python and Machine Learning.',
@@ -17,7 +17,7 @@ setup(
   download_url = 'https://github.com/RichardLiuCoding/aespm.git',
   keywords = ['SPM', 'Python', 'Instrument control', 'Autonomoous', 'Machine learning','Data Analysis'],
   install_requires=[
-          'numpy',
+          'numpy<2.0',
           'scipy',
           'matplotlib',
           'igor2',
