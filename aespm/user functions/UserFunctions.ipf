@@ -63,6 +63,19 @@ Function ChangeName(NewName)
     BaseNameSetVarFunc(ButtonStruct)
 End //
 
+Function SingleTune()
+    CantTuneFunc("DoTuneOnceButton")
+    //SingleTuneFromMenu()  //or you could invoke the function for the Ctrl + 4 menu, this probably protects you more from changes in versions
+End //SingleTune
+ 
+Function SinglePhase()
+    CantTuneFunc("DoTuneSet90Button")
+End //SinglePhase
+ 
+Function SingleForce()
+    DoForceFunc("SingleForce_1")
+    //SinglePullFromMenu()  //or you could invoke the function for the Ctrl + 3 menu
+End //SingleForce
 
 Function MoveStage(Direction)
     String Direction
@@ -274,3 +287,37 @@ Function/S RampBackpackItems(AddressList,DestPositions,RampTime,Event,[Callback]
             	endif
             	Return ErrorStr
 End //RampBackpackItems
+
+
+Function LinkDriveAmps([StartEvent,StopEvent])
+            	String StartEvent, StopEvent
+               
+            	if (ParamIsDefault(StartEvent))
+                            	StartEvent = "Always"
+            	endif
+            	if (ParamIsDefault(StopEvent))
+                            	StopEvent = "Never"
+            	endif
+ 
+ 
+            	Struct ARFeedbackStruct FB
+            	FB.Input = "DDSAmplitude0"
+            	FB.Output = "DDSAmplitude1"
+            	FB.DynamicSetpoint = True
+            	FB.Setpoint = Nan
+            	FB.SetpointOffset = 0
+            	FB.PGain = -1
+            	FB.iGain = 0
+            	FB.sGain = 0
+            	FB.dGain = 0
+            	FB.StartEvent = StartEvent
+            	FB.StopEvent = StopEvent
+            	FB.OutputMax = 5
+            	FB.OutputMin = 0
+            	FB.LoopName = "AmpLoop"
+            	FB.Bank = 5
+            	FB.DontSwapToBackpack = True
+            	String ErrorStr = Ir_WritePIDSloop(FB)
+            	ARReportERror(ErrorStr)
+ 
+End //LinkDriveAmps
